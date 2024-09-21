@@ -1,52 +1,36 @@
 package Entidades;
 
-public class Proprietario {
-    private int id;
-    private String nome;
-    private int idade;
-    private String cpf;
+public class Proprietario extends Pessoa {
+    
+    private String telefoneContato;
+    private String endereco;
 
     public Proprietario(){
+        super();
     }
 
-    public Proprietario(int id, String nome, int idade, String cpf){
-        this.id=id++;
-        this.nome=nome;
-        this.idade=idade;
-        this.cpf=cpf;
+    public Proprietario(String nome, int idade, String cpf, String telefoneContato, String endereco){
+        super(nome, idade, cpf);
+        this.telefoneContato=telefoneContato;
+        this.endereco=endereco;
     }
 
-	public int getId() {
-		return id;
-	}
-
-    public void setId(int id){
-        this.id = id;
+    public String getTelefoneContato() {
+        return telefoneContato;
     }
-	public String getNome() {
-		return nome;
-	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public void setTelefoneContato(String telefoneContato) {
+        this.telefoneContato = telefoneContato;
+    }
 
-	public int getIdade() {
-		return idade;
-	}
+    public String getEndereco() {
+        return endereco;
+    }
 
-	public void setIdade(int idade) {
-		this.idade = idade;
-	}
-
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
     
+
     
 }

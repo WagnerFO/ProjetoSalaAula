@@ -1,26 +1,34 @@
 package Entidades;
 
+import Entidades.Enum.CarroTipo;
+
 public class Carro extends Veiculo {
-   
-    Proprietario proprietario;
-    
+
+    private int quantPortas;
+    private CarroTipo tipo;
+ 
+
     public Carro() {
         super();
     }
 
-    public Carro(String marca, String modelo, String cor, int ano,String placa, Proprietario proprietario) {
+    public Carro(String marca, String modelo, String cor, int ano,String placa, int quantPortas, CarroTipo tipo) {
 		super(marca, modelo, cor, ano,placa);
-		this.proprietario=proprietario;
+        this.quantPortas=quantPortas;
+        this.tipo=tipo;
 	}
 
-    
-    public Proprietario getProprietario() {
-        return proprietario;
+    public CarroTipo setTipo(){
+        return tipo;
     }
 
-    public void setProprietario(Proprietario proprietario) {
-        this.proprietario = proprietario;
+    public int getQuantPortas(){
+        return quantPortas;
     }
-  
+
+    public void setQuantPortas(int quantPortas){
+        this.quantPortas=quantPortas;
+    }
+    
     
 }

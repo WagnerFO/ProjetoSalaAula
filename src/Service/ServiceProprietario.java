@@ -3,7 +3,6 @@ package Service;
 import java.util.ArrayList;
 
 import Entidades.Proprietario;
-import Exception.validarCadastro;
 import IRepositorio.repositorioProprietarioInterface;
 import IService.serviceProprietarioInterface;
 
@@ -14,16 +13,8 @@ public class ServiceProprietario implements serviceProprietarioInterface{
         this.proprietarioRepositorio = proprietarioRepositorio;
     }
     
-
-	private void validarNome(String nome) throws Exception{
-		if(nome == null){
-            throw new Exception("Nome do Proprietario é OBRIGATÓRIO!");
-        }
-	}
 	@Override
 	public void cadastrarProprietario(Proprietario proprietario) throws Exception {
-		//validarCadastro.validarProprietario(proprietario);
-		validarNome(proprietario.getNome());
 		if(proprietario.getNome() == null || proprietario.getNome().trim().isEmpty()){
             throw new Exception("Nome do Proprietario é OBRIGATÓRIO!");
         }
@@ -43,7 +34,6 @@ public class ServiceProprietario implements serviceProprietarioInterface{
 
 	@Override
 	public void alterarProprietario(Proprietario proprietario) throws Exception {
-		//validarCadastro.validarProprietario(proprietario);
 		if(proprietario.getNome() == null || proprietario.getNome().trim().isEmpty()){
             throw new Exception("Nome do Proprietario é OBRIGATÓRIO!");
         }

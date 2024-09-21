@@ -1,26 +1,36 @@
 package Entidades;
 
-public class Moto extends Veiculo{
-	
-	Proprietario proprietario;
+import Entidades.Enum.MotoTipo;
 
-	public Moto() {
-		super();
-	}
-	
-	public Moto (String marca, String modelo, String cor, int ano,String placa, Proprietario proprietario) {
-		super(marca, modelo, cor, ano,placa);
-		this.proprietario=proprietario;
+public class Moto extends Veiculo {
+
+    private int cilindradas;
+    private MotoTipo tipo;
+ 
+
+    public Moto() {
+        super();
+    }
+
+    public Moto(String marca, String modelo, String cor, int ano, String placa, int cilindradas, MotoTipo tipo) {
+		super(marca, modelo, cor, ano, placa);
+        this.cilindradas = cilindradas;
+        this.tipo = tipo;
 	}
 
-	
+    public MotoTipo getTipo() {
+        return tipo;
+    }
 
-	public Proprietario getProprietario() {
-		return proprietario;
-	}
+    public void setTipo(MotoTipo tipo) {
+        this.tipo = tipo;
+    }
 
-	public void setProprietario(Proprietario proprietario) {
-		this.proprietario = proprietario;
-	}
-	
+    public int getCilindradas() {
+        return cilindradas;
+    }
+
+    public void setCilindradas(int cilindradas) {
+        this.cilindradas = cilindradas;
+    }
 }

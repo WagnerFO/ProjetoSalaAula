@@ -31,10 +31,6 @@ public abstract class  Veiculo {
 		return id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
 	public String getMarca() {
 		return marca;
 	}
@@ -64,7 +60,12 @@ public abstract class  Veiculo {
 	}
 
 	public void setAno(int ano) {
+		if(ano>1900 && ano <=java.time.Year.now().getValue()){
 		this.ano = ano;
+		}
+		else{
+			throw new IllegalArgumentException("Ano Inválido!");
+		}
 	}
 
 	public String getPlaca() {

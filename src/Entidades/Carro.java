@@ -22,8 +22,8 @@ public class Carro extends Veiculo {
         return tipo;
     }
 
-    public CarroTipo setTipo(){
-        return tipo;
+    public void setTipo(CarroTipo tipo){
+        this.tipo = tipo;
     }
 
     public int getQuantPortas(){

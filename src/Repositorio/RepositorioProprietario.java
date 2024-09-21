@@ -12,7 +12,7 @@ public class RepositorioProprietario implements repositorioProprietarioInterface
 	public void cadastrarProprietario(Proprietario proprietario) {
 		proprietarios.add(proprietario);
 	}
-    public void cadastrarProprietario(int id, String nome, int idade, String cpf){
+    public void cadastrarProprietario(int id, String nome, int idade, String cpf, String telefoneContato, String endereco){
         Proprietario proprietario = new Proprietario();
         proprietarios.add(proprietario);
     }
@@ -25,7 +25,6 @@ public class RepositorioProprietario implements repositorioProprietarioInterface
             buscar.setIdade(proprietario.getIdade());
             buscar.setCpf(proprietario.getCpf());            
         }
-		
 	}
 
 	@Override
@@ -38,6 +37,7 @@ public class RepositorioProprietario implements repositorioProprietarioInterface
     public ArrayList<Proprietario> verProprietarios() {
         return proprietarios;
     }
+    
     @Override
     public Proprietario buscarProprietarioPorCpf(String cpf) {
         for(Proprietario proprietario : proprietarios){

@@ -12,6 +12,4 @@ public interface repositorioProprietarioInterface {
     ArrayList <Proprietario> verProprietarios();    
     Proprietario buscarProprietarioPorCpf(String cpf);
 
-    
-
 }

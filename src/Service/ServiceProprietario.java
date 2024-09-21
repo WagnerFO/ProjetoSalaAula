@@ -15,15 +15,16 @@ public class ServiceProprietario implements serviceProprietarioInterface{
     
 	@Override
 	public void cadastrarProprietario(Proprietario proprietario) throws Exception {
-		if(proprietario.getNome() == null || proprietario.getNome().trim().isEmpty()){
+		if(proprietario.getNome() == null || proprietario.getNome().trim().isEmpty())
             throw new Exception("Nome do Proprietario é OBRIGATÓRIO!");
-        }
-        if(proprietario.getCpf() == null || proprietario.getCpf().trim().isEmpty()){
+        if(proprietario.getCpf() == null || proprietario.getCpf().trim().isEmpty())
             throw new Exception("CPF do Proprietário é OBRIGATÓRIO!");
-        }
-        if(proprietario.getIdade() < 18 ) {
+        if(proprietario.getIdade() < 18 ) 
         	throw new Exception("Idade do Proprietário deve ser maior que 18 anos.");
-        }
+		if(proprietario.getEndereco() == null || proprietario.getEndereco().trim().isEmpty())
+			throw new Exception("Endereco do Proprietário é obrigatório! ");
+		if(proprietario.getTelefoneContato() == null || proprietario.getTelefoneContato().trim().isEmpty());
+
 		proprietarioRepositorio.cadastrarProprietario(proprietario);
 	}
 

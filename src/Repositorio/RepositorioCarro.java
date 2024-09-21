@@ -3,23 +3,16 @@ package Repositorio;
 import java.util.ArrayList;
 
 import Entidades.Carro;
-import Entidades.Proprietario;
 import IRepositorio.repositorioCarroInterface;
 
 public class RepositorioCarro implements repositorioCarroInterface{
-    private ArrayList<Carro> carros = new ArrayList<>();
-    
+    private ArrayList<Carro> carrosDisp = new ArrayList<>();
+	private ArrayList<Carro> carrosVend = new ArrayList<>();
     
 	@Override
 	public void cadastrarCarro(Carro carro) {
-		carros.add(carro);
-		
+		carrosDisp.add(carro);
 	}
-    
-    public void cadastrarCarro(String marca, String modelo, String cor, int ano, String placa, Proprietario proprietario){
-        Carro carro = new Carro (marca, modelo, cor, ano, placa, proprietario);
-        carros.add(carro); 
-    }
 
 	@Override
 	public void atualizarCarro(Carro carro) {
@@ -33,22 +26,42 @@ public class RepositorioCarro implements repositorioCarroInterface{
 
 	@Override
 	public void removerCarro(Carro carro) {
-		carros.remove(carro);
+		if(carrosDisp.remove(carro)){
+			carrosVend.add(carro);
+		}else{
+			System.out.println("Carro não encontrado.");
+		}		
 	}
 
 	@Override
-	public ArrayList<Carro> verCarros() {
-		return carros;
+	public ArrayList<Carro> verCarrosDisp() {
+		return carrosDisp;
 	}
+
+	@Override
+	public ArrayList<Carro> verCarrosVend() {
+		return carrosVend;
+	}
+	
 
 	@Override
 	public Carro buscarCarroPorPlaca(String placa) {
-		for(Carro carro : carros) {
+		for(Carro carro : carrosDisp) {
 			if(carro.getPlaca().equals(placa)) {
+				System.out.println("O Carro com a placa "+placa+" está disponivel");
 				return carro;
 			}
 		}
+		for(Carro carro : carrosVend){
+			if(carro.getPlaca().equals(placa)){
+				System.out.println("O Carro com a placa "+placa+" já foi vendido");
+				return carro;
+			}
+		}
+		System.out.println("O Carro com a placa "+placa+" não foi encontrado!");
 		return null;
 	}
+
+	
 
 }

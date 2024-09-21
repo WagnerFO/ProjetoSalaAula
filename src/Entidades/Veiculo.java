@@ -10,22 +10,22 @@ public abstract class  Veiculo {
     private String cor;
     private int ano;
 	private String placa;
+	private double valorVenda;
 	
 
     public Veiculo(){
 		this.id=nextId++;
     }
 
-    public Veiculo(String marca, String modelo, String cor, int ano, String placa){
+    public Veiculo(String marca, String modelo, String cor, int ano, String placa, double valorVenda){
         this.id=nextId++;
 		this.marca=marca;
         this.modelo=modelo;
         this.cor=cor;
         this.ano=ano;
 		this.placa=placa;
+		this.valorVenda=valorVenda;
     }
-
-	
 
     public int getId() {
 		return id;
@@ -76,6 +76,12 @@ public abstract class  Veiculo {
 		this.placa = placa;
 	}
 
-	
+	public double getValorVenda() {
+		return valorVenda;
+	}
+
+	public void setValorVenda(double valorVenda) {
+		this.valorVenda = valorVenda;
+	}
 
 }

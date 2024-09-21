@@ -15,18 +15,15 @@ public class ServiceCarro implements serviceCarroInterface{
 
 		@Override
 	public void cadastrarCarro(Carro carro) throws Exception {
-		if(carro.getModelo() == null || carro.getModelo().trim().isBlank()){
-            throw new Exception("Modelo do carro é OBRIGATÓRIO!");
-        }
-        if(carro.getMarca() == null || carro.getMarca().trim().isEmpty()){
-            throw new Exception("Marca do carro é OBRIGATÓRIO!");
-        }
-        if(carro.getCor() == null || carro.getCor().trim().isEmpty()){
-            throw new Exception ("Cor do carro é OBRIGATÓRIA!");
-        }
-        if(carro.getProprietario() == null ){
-            throw new Exception ("Carro deve possuir um proprietario! ");
-        }
+		if(carro.getModelo() == null || carro.getModelo().trim().isBlank())
+    		throw new Exception("Modelo do carro é OBRIGATÓRIO!");
+		if(carro.getMarca() == null || carro.getMarca().trim().isEmpty())
+			throw new Exception("Marca do carro é OBRIGATÓRIA!");
+		if(carro.getCor() == null || carro.getCor().trim().isEmpty())
+			throw new Exception("Cor do carro é OBRIGATÓRIA!");
+		if(carro.getPlaca() == null || carro.getPlaca().trim().isEmpty())
+			throw new Exception("Carro deve possuir uma placa!");
+
 		carroRepositorio.cadastrarCarro(carro);
 	}
 
@@ -37,18 +34,14 @@ public class ServiceCarro implements serviceCarroInterface{
 
 	@Override
 	public void alterarCarro(Carro carro) throws Exception {
-		if(carro.getModelo() == null || carro.getModelo().trim().isBlank()){
-            throw new Exception("Modelo do carro é OBRIGATÓRIO!");
-        }
-        if(carro.getMarca() == null || carro.getMarca().trim().isEmpty()){
-            throw new Exception("Marca do carro é OBRIGATÓRIO!");
-        }
-        if(carro.getCor() == null || carro.getCor().trim().isEmpty()){
-            throw new Exception ("Cor do carro é OBRIGATÓRIA!");
-        }
-        if(carro.getProprietario() == null ){
-            throw new Exception ("Carro deve possuir um proprietario! ");
-        }
+		if(carro.getModelo() == null || carro.getModelo().trim().isBlank())
+    		throw new Exception("Modelo do carro é OBRIGATÓRIO!");
+		if(carro.getMarca() == null || carro.getMarca().trim().isEmpty())
+			throw new Exception("Marca do carro é OBRIGATÓRIA!");
+		if(carro.getCor() == null || carro.getCor().trim().isEmpty())
+			throw new Exception("Cor do carro é OBRIGATÓRIA!");
+		if(carro.getPlaca() == null || carro.getPlaca().trim().isEmpty())
+			throw new Exception("Carro deve possuir uma placa!");
 		carroRepositorio.atualizarCarro(carro);
 	}
 
@@ -58,10 +51,14 @@ public class ServiceCarro implements serviceCarroInterface{
 	}
 
 	@Override
-	public ArrayList<Carro> verCarros() {
-		return carroRepositorio.verCarros();
+	public ArrayList<Carro> verCarrosDisp() {
+		return carroRepositorio.verCarrosDisp();
 	}
 
+	@Override
+	public ArrayList<Carro> verCarrosVend() {
+		return carroRepositorio.verCarrosVend();
+	}
 
     
 }

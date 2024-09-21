@@ -1,54 +1,63 @@
 package Repositorio;
 
 import java.util.ArrayList;
-
 import Entidades.Moto;
-import Entidades.Proprietario;
 import IRepositorio.repositorioMotoInterface;
 
-public class RepositorioMoto implements repositorioMotoInterface{
-    private ArrayList<Moto> motos = new ArrayList<>();
-    
-    
-		@Override
-	public void cadastrarMoto(Moto moto) {
-		motos.add(moto);
-	}
+public class RepositorioMoto implements repositorioMotoInterface {
+    private ArrayList<Moto> motosDisp = new ArrayList<>();
+    private ArrayList<Moto> motosVend = new ArrayList<>();
 
-	public void cadastrarMoto(String marca, String modelo, String cor, int ano, String placa, Proprietario proprietario) {
-		Moto moto = new Moto(marca, modelo, cor, ano, placa, proprietario);
-		motos.add(moto);
-	}
+    @Override
+    public void cadastrarMoto(Moto moto) {
+        motosDisp.add(moto);
+    }
 
-	@Override
-	public void atualizarMoto(Moto moto) {
-		Moto buscar = buscarMotoPorPlaca(moto.getPlaca());
-		if(buscar != null) {
-			buscar.setModelo(moto.getModelo());
-			buscar.setAno(moto.getAno());
-			buscar.setPlaca(moto.getPlaca());
-		}
-	}
+    @Override
+    public void atualizarMoto(Moto moto) {
+        Moto buscar = buscarMotoPorPlaca(moto.getPlaca());
+        if (buscar != null) {
+            buscar.setModelo(moto.getModelo());
+            buscar.setAno(moto.getAno());
+            buscar.setPlaca(moto.getPlaca());
+            buscar.setCilindradas(moto.getCilindradas());
+        }
+    }
 
-	@Override
-	public void removerMoto(Moto moto) {
-		motos.remove(moto);
-	}
+    @Override
+    public void removerMoto(Moto moto) {
+        if (motosDisp.remove(moto)) {
+            motosVend.add(moto);
+        } else {
+            System.out.println("Moto não encontrada.");
+        }
+    }
 
-	@Override
-	public ArrayList<Moto> verMotos() {
-		return motos;
-	}
+    @Override
+    public ArrayList<Moto> verMotosDisp() {
+        return motosDisp;
+    }
 
-	@Override
-	public Moto buscarMotoPorPlaca(String placa) {
-		for(Moto moto : motos) {
-			if(moto.getPlaca().equals(placa)) {
-				return moto;
-			}
-		}
-		return null;
-	}
+    @Override
+    public ArrayList<Moto> verMotosVend() {
+        return motosVend;
+    }
 
-
+    @Override
+    public Moto buscarMotoPorPlaca(String placa) {
+        for (Moto moto : motosDisp) {
+            if (moto.getPlaca().equals(placa)) {
+                System.out.println("A Moto com a placa " + placa + " está disponível.");
+                return moto;
+            }
+        }
+        for (Moto moto : motosVend) {
+            if (moto.getPlaca().equals(placa)) {
+                System.out.println("A Moto com a placa " + placa + " já foi vendida.");
+                return moto;
+            }
+        }
+        System.out.println("A Moto com a placa " + placa + " não foi encontrada!");
+        return null;
+    }
 }

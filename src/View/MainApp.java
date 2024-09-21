@@ -3,35 +3,12 @@ package View;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import Entidades.Caminhao;
-import Entidades.Carro;
-import Entidades.Moto;
-import Entidades.Proprietario;
-import Entidades.Veiculo;
-import Entidades.Venda;
-import Entidades.Enum.CaminhaoTipo;
-import Entidades.Enum.CarroTipo;
-import Entidades.Enum.MotoTipo;
-import IRepositorio.repositorioCaminhaoInterface;
-import IRepositorio.repositorioCarroInterface;
-import IRepositorio.repositorioMotoInterface;
-import IRepositorio.repositorioProprietarioInterface;
-import IRepositorio.repositorioVendaInterface;
-import IService.serviceCaminhaoInterface;
-import IService.serviceCarroInterface;
-import IService.serviceMotoInterface;
-import IService.serviceProprietarioInterface;
-import IService.serviceVendaInterface;
-import Repositorio.RepositorioCaminhao;
-import Repositorio.RepositorioCarro;
-import Repositorio.RepositorioMoto;
-import Repositorio.RepositorioProprietario;
-import Repositorio.RepositorioVenda;
-import Service.ServiceCaminhao;
-import Service.ServiceCarro;
-import Service.ServiceMoto;
-import Service.ServiceProprietario;
-import Service.ServiceVenda;
+import Entidades.*;
+import Entidades.Enum.*;
+import IRepositorio.*;
+import IService.*;
+import Repositorio.*;
+import Service.*;
 
 public class MainApp {
     private static repositorioProprietarioInterface repositorioProprietario = new RepositorioProprietario();
@@ -110,49 +87,100 @@ public class MainApp {
         } else {
             System.out.println("Veículo não encontrado.");
         }
-    }
+        
+        
+        
+        boolean sair = false;
+        while (!sair) {
+        exibirMenuPrincipal();
+        int opcaoMP = scanner.nextInt();
+        scanner.nextLine(); // Consumir nova linha
+        switch (opcaoMP) {
+            case 1:
+            	exibirMenuVeiculo();
+            	break;
+            case 2:
+            	//
+            	break;
+            case 3:
+            	//
+            	break;
+            case 0: 
+            	
+            	break;
+            default:
+            	System.out.println("Opção inválida! Tente Novamente.");
+            	break;
+            	
 
-    boolean sair = false;
-         while (!sair) {
-             exibirMenuPrincipal();
-             int opcao = scanner.nextInt();
-             scanner.nextLine(); // Consumir nova linha
 
-             switch (opcao) {
-                 case 1:
-                     boolean sairMV = false;
-                     while (!sairMV) {
-                         exibirMenuVeiculo();
-                         int opcaoMV = scanner.nextInt();
-                         scanner.nextLine(); // Consumir nova linha
 
-                         switch (opcaoMV) {
-                             case 1:
-                                 exibirMenuCarro();
-                                 break;
-                             case 2:
-                                 exibirMenuMoto();
-                                 break;
-                             case 3:
-                                 exibirMenuCaminhao();
-                                 break;
-                             case 4:
-                                 buscarPaciente();
-                                 break;
-                             case 5:
-                                 listarPacientes();
-                                 break;
-                             case 6:
-                                 sairMV = true;
-                                 break;
-                             default:
-                                 System.out.println("Opção inválida! Tente novamente.");
-                                 break;
-                         }
-                     }
-                     break;
 
-                 case 2:
+
+
+
+
+
+
+
+
+
+
+
+
+
+                int opcaoMV = scanner.nextInt();
+                scanner.nextLine(); // Consumir nova linha
+                switch (opcaoMV) {
+                case 1:
+                exibirMenuCarro();
+                boolean sairMC = false;
+                while (sairMC) {
+                    int opcaoMC = scanner.nextInt();
+                    scanner.nextLine();//Consumir nova Linha
+                    switch (opcaoMC) {
+                        case 1:
+                            cadastrarCarro();
+                            break;
+                        case 2:
+                            removerCarro();
+                            break;
+                        case 3:
+                            atualizarCarro();
+                            break;
+                        case 4:
+                            buscarCarro();
+                            break;
+                        case 5: 
+                            ListarCarrosDisponiveis();
+                            break;
+                        case 6:
+                            ListarCarrosVendidos();
+                            break;
+                        default:
+                            System.out.println("Opção inválida! Tente Novamente.");
+                            break;
+                    }
+                }
+                    exibirMenuCarro();
+                    break;
+                case 2:
+                    //exibirMenuMoto();
+                    break;
+                case 3:
+                    //exibirMenuCaminhao();
+                    break;
+                case 0:
+                    sairMV = true;
+                    break;
+                default:
+                System.out.println("Opção inválida! Tente novamente.");
+                break;
+            }
+        }
+        break;
+
+                /* case 2:
                      boolean sairM = false;
                      while (!sairM) {
                          exibirMenuMedico();
@@ -214,8 +242,8 @@ public class MainApp {
                     		 System.out.println("Opção inválida! Tente Novamente.");
                     		 break;
                     	 }
-                     }
-                     break;
+                     }*/
+                     //break;
                  case 0:
                      sair = true;
                      break;
@@ -226,7 +254,7 @@ public class MainApp {
              }
          }
          scanner.close();
-     }*/
+     }
 
     private static void exibirMenuPrincipal() {
         System.out.println("\n### APLICAÇÃO DE CADASTRO DE VEICULOS ###");
@@ -620,32 +648,6 @@ public class MainApp {
         }
     }
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
 

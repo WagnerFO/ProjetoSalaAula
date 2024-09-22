@@ -1,10 +1,7 @@
 package Service;
 
 import Entidades.Venda;
-import IRepositorio.repositorioVendaInterface;
-import IRepositorio.repositorioCaminhaoInterface;
-import IRepositorio.repositorioCarroInterface;
-import IRepositorio.repositorioMotoInterface;
+import IRepositorio.*;
 import IService.serviceVendaInterface;
 import Entidades.Caminhao;
 import Entidades.Carro;
@@ -21,14 +18,23 @@ public class ServiceVenda implements serviceVendaInterface{
     private repositorioMotoInterface motoRepositorio;
     private repositorioCaminhaoInterface caminhaoRepositorio;
 
-    public ServiceVenda (repositorioVendaInterface vendaRepositorio){
-        this.vendaRepositorio=vendaRepositorio;
+
+    public ServiceVenda (repositorioCarroInterface carroRepositorio,
+                         repositorioMotoInterface motoRepositorio, 
+                         repositorioCaminhaoInterface caminhaoRepositorio, 
+                         repositorioProprietarioInterface proprietarioRepositorio, 
+                         repositorioVendaInterface vendaRepositorio){
+                            this.vendaRepositorio=vendaRepositorio;
+                            this.carroRepositorio=carroRepositorio;
+                            this.motoRepositorio=motoRepositorio;
+                            this.caminhaoRepositorio=caminhaoRepositorio;
+
     }
 
     @Override
     public void venderCarro(String placa, Proprietario proprietario) throws Exception{
         Carro carro = carroRepositorio.buscarCarroPorPlaca(placa);
-        if(carro!=null){
+        if(carro==null){
             throw new Exception("Carro não Encontrado! ");
         }
         Venda venda = new Venda(proprietario);
@@ -42,7 +48,7 @@ public class ServiceVenda implements serviceVendaInterface{
     @Override
     public void venderMoto(String placa, Proprietario proprietario) throws Exception{
         Moto moto = motoRepositorio.buscarMotoPorPlaca(placa);
-        if(moto!=null)
+        if(moto==null)
             throw new Exception("Moto não Encontrada! ");
 
         Venda venda = new Venda(proprietario);
@@ -56,7 +62,7 @@ public class ServiceVenda implements serviceVendaInterface{
     @Override
     public void venderCaminhao(String placa, Proprietario proprietario) throws Exception{
         Caminhao caminhao = caminhaoRepositorio.buscarCaminhaoPorPlaca(placa);
-        if(caminhao!=null)
+        if(caminhao==null)
             throw new Exception("Caminhão não Encontrado! ");
         
         Venda venda = new Venda(proprietario);

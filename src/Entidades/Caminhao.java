@@ -44,7 +44,7 @@ public class Caminhao extends Veiculo {
 
     @Override
     public String toString() {
-        return "Caminhão:\n" +
+        return "\nCaminhão:\n" +
                "ID: " + getId() + "\n" +
                "Marca: " + getMarca() + "\n" +
                "Modelo: " + getModelo() + "\n" +
@@ -53,6 +53,6 @@ public class Caminhao extends Veiculo {
                "Placa: " + getPlaca() + "\n" +
                "Valor: " + getValorVenda() + "\n" +
                "Toneladas de Carga: " + getToneladasCarga() + "\n" +
-               "Tipo: " + tipo;
+               "Tipo: " + getTipo() + "\n";
     }
 }

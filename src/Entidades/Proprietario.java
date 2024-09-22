@@ -33,13 +33,14 @@ public class Proprietario extends Pessoa {
     
     @Override
     public String toString() {
-        return "Proprietário:\n" +
+        return 
+            "\n"+"Proprietário:\n" +
            "ID: " + getId() + "\n" +
            "Nome: " + getNome() + "\n" +
            "Idade: " + getIdade() + "\n" +
            "CPF: " + getCpf() + "\n" +
            "Telefone de Contato: " + telefoneContato + "\n" +
-           "Endereço: " + endereco;
+           "Endereço: " + endereco+"\n";
 }
 
 

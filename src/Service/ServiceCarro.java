@@ -9,8 +9,9 @@ import IService.serviceCarroInterface;
 public class ServiceCarro implements serviceCarroInterface{
 
 	private repositorioCarroInterface carroRepositorio;
-	public ServiceCarro (repositorioCarroInterface carroRepositorio){
-		this.carroRepositorio=carroRepositorio;
+	public ServiceCarro(repositorioCarroInterface carroRepositorio) {
+		this.carroRepositorio = carroRepositorio;
+		System.out.println("RepositorioCarro inicializado: " + (this.carroRepositorio != null));
 	}
 
 		@Override

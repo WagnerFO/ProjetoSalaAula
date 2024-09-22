@@ -44,7 +44,7 @@ public class Moto extends Veiculo {
 
     @Override
     public String toString() {
-        return "Moto:\n" +
+        return "\nMoto:\n" +
                "ID: " + getId() + "\n" +
                "Marca: " + getMarca() + "\n" +
                "Modelo: " + getModelo() + "\n" +
@@ -52,7 +52,7 @@ public class Moto extends Veiculo {
                "Ano: " + getAno() + "\n" +
                "Placa: " + getPlaca() + "\n" +
                "Valor: " + getValorVenda() + "\n" +
-               "Cilindradas: " + getCilindradas() + "\n" +
-               "Tipo: " + tipo;
+               "Tipo: " + getTipo() + "\n" +
+               "Cilindrada: " + getCilindradas() + "\n";
     }
 }

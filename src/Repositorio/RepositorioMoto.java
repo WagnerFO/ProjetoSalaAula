@@ -1,6 +1,7 @@
 package Repositorio;
 
 import java.util.ArrayList;
+
 import Entidades.Moto;
 import IRepositorio.repositorioMotoInterface;
 
@@ -20,17 +21,13 @@ public class RepositorioMoto implements repositorioMotoInterface {
             buscar.setModelo(moto.getModelo());
             buscar.setAno(moto.getAno());
             buscar.setPlaca(moto.getPlaca());
-            buscar.setCilindradas(moto.getCilindradas());
+            
         }
     }
 
     @Override
     public void removerMoto(Moto moto) {
-        if (motosDisp.remove(moto)) {
-            motosVend.add(moto);
-        } else {
-            System.out.println("Moto não encontrada.");
-        }
+        motosDisp.remove(moto);
     }
 
     @Override
@@ -47,29 +44,26 @@ public class RepositorioMoto implements repositorioMotoInterface {
     public Moto buscarMotoPorPlaca(String placa) {
         for (Moto moto : motosDisp) {
             if (moto.getPlaca().equals(placa)) {
-                System.out.println("A Moto com a placa " + placa + " está disponível.");
                 return moto;
             }
         }
         for (Moto moto : motosVend) {
             if (moto.getPlaca().equals(placa)) {
-                System.out.println("A Moto com a placa " + placa + " já foi vendida.");
                 return moto;
             }
         }
-        System.out.println("A Moto com a placa " + placa + " não foi encontrada!");
         return null;
     }
 
-    @Override
     public void venderMoto(Moto moto) {
         removerMoto(moto);
         motosVend.add(moto);
     }
 
     @Override
-    public void desfazerVendaMoto(Moto moto){
+    public void desfazerVendaMoto(Moto moto) {
         motosVend.remove(moto);
         cadastrarMoto(moto);
     }
 }
+

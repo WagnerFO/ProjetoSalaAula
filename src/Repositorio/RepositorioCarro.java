@@ -44,15 +44,14 @@ public class RepositorioCarro implements repositorioCarroInterface{
 	public Carro buscarCarroPorPlaca(String placa) {
 		for(Carro carro : carrosDisp) {
 			if(carro.getPlaca().equals(placa)) {
-				System.out.println("O Carro com a placa "+placa+" está disponivel");
-				return carro;
-			}
-			if(carro.getPlaca().equals(placa)){
-				System.out.println("O Carro com a placa "+placa+" já foi vendido");
 				return carro;
 			}
 		}
-		System.out.println("O Carro com a placa "+placa+" não foi encontrado!");
+		for(Carro carro : carrosVend){		
+			if(carro.getPlaca().equals(placa)){
+				return carro;
+			} 
+		}
 		return null;
 	}
 

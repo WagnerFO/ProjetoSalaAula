@@ -1,16 +1,17 @@
 package Repositorio;
 
 import java.util.ArrayList;
+
 import Entidades.Caminhao;
 import IRepositorio.repositorioCaminhaoInterface;
 
 public class RepositorioCaminhao implements repositorioCaminhaoInterface {
-    private ArrayList<Caminhao> caminhoesDisp = new ArrayList<>();
-    private ArrayList<Caminhao> caminhoesVend = new ArrayList<>();
+    private ArrayList<Caminhao> caminhõesDisp = new ArrayList<>();
+    private ArrayList<Caminhao> caminhõesVend = new ArrayList<>();
 
     @Override
     public void cadastrarCaminhao(Caminhao caminhao) {
-        caminhoesDisp.add(caminhao);
+        caminhõesDisp.add(caminhao);
     }
 
     @Override
@@ -20,56 +21,47 @@ public class RepositorioCaminhao implements repositorioCaminhaoInterface {
             buscar.setModelo(caminhao.getModelo());
             buscar.setAno(caminhao.getAno());
             buscar.setPlaca(caminhao.getPlaca());
-            buscar.setToneladasCarga(caminhao.getToneladasCarga());
         }
     }
 
     @Override
     public void removerCaminhao(Caminhao caminhao) {
-        if (caminhoesDisp.remove(caminhao)) {
-            caminhoesVend.add(caminhao);
-        } else {
-            System.out.println("Caminhão não encontrado.");
-        }
+        caminhõesDisp.remove(caminhao);
     }
 
     @Override
     public ArrayList<Caminhao> verCaminhoesDisp() {
-        return caminhoesDisp;
+        return caminhõesDisp;
     }
 
     @Override
     public ArrayList<Caminhao> verCaminhoesVend() {
-        return caminhoesVend;
+        return caminhõesVend;
     }
 
     @Override
     public Caminhao buscarCaminhaoPorPlaca(String placa) {
-        for (Caminhao caminhao : caminhoesDisp) {
+        for (Caminhao caminhao : caminhõesDisp) {
             if (caminhao.getPlaca().equals(placa)) {
-                System.out.println("O Caminhão com a placa " + placa + " está disponível.");
                 return caminhao;
             }
         }
-        for (Caminhao caminhao : caminhoesVend) {
+        for (Caminhao caminhao : caminhõesVend) {
             if (caminhao.getPlaca().equals(placa)) {
-                System.out.println("O Caminhão com a placa " + placa + " já foi vendido.");
                 return caminhao;
             }
         }
-        System.out.println("O Caminhão com a placa " + placa + " não foi encontrado!");
         return null;
     }
 
-    @Override
     public void venderCaminhao(Caminhao caminhao) {
         removerCaminhao(caminhao);
-        caminhoesVend.add(caminhao);
+        caminhõesVend.add(caminhao);
     }
 
     @Override
-    public void desfazerVendaCaminhao(Caminhao caminhao){
-        caminhoesVend.remove(caminhao);
+    public void desfazerVendaCaminhao(Caminhao caminhao) {
+        caminhõesVend.remove(caminhao);
         cadastrarCaminhao(caminhao);
     }
 }

@@ -8,7 +8,7 @@ public interface serviceProprietarioInterface {
 
     public void cadastrarProprietario(Proprietario proprietario) throws Exception;
     public void removerProprietario(Proprietario proprietario);
-    public void alterarProprietario(Proprietario proprietario) throws Exception;
+    public void atualizarProprietario(Proprietario proprietario) throws Exception;
     ArrayList<Proprietario> verProprietario();
     public Proprietario buscarProprietario(String cpf);
 }

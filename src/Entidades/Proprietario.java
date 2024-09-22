@@ -31,6 +31,17 @@ public class Proprietario extends Pessoa {
         this.endereco = endereco;
     }
     
+    @Override
+    public String toString() {
+        return "Proprietário:\n" +
+           "ID: " + getId() + "\n" +
+           "Nome: " + getNome() + "\n" +
+           "Idade: " + getIdade() + "\n" +
+           "CPF: " + getCpf() + "\n" +
+           "Telefone de Contato: " + telefoneContato + "\n" +
+           "Endereço: " + endereco;
+}
+
 
     
 }

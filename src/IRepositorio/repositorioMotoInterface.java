@@ -10,4 +10,6 @@ public interface repositorioMotoInterface {
     ArrayList<Moto> verMotosDisp();
     ArrayList<Moto> verMotosVend();
     public Moto buscarMotoPorPlaca(String placa);
+    void venderMoto(Moto moto);
+    void desfazerVendaMoto(Moto moto);
 }

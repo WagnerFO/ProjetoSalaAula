@@ -60,4 +60,16 @@ public class RepositorioMoto implements repositorioMotoInterface {
         System.out.println("A Moto com a placa " + placa + " não foi encontrada!");
         return null;
     }
+
+    @Override
+    public void venderMoto(Moto moto) {
+        removerMoto(moto);
+        motosVend.add(moto);
+    }
+
+    @Override
+    public void desfazerVendaMoto(Moto moto){
+        motosVend.remove(moto);
+        cadastrarMoto(moto);
+    }
 }

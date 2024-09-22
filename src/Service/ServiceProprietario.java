@@ -34,7 +34,7 @@ public class ServiceProprietario implements serviceProprietarioInterface{
 	}
 
 	@Override
-	public void alterarProprietario(Proprietario proprietario) throws Exception {
+	public void atualizarProprietario(Proprietario proprietario) throws Exception {
 		if(proprietario.getNome() == null || proprietario.getNome().trim().isEmpty()){
             throw new Exception("Nome do Proprietario é OBRIGATÓRIO!");
         }

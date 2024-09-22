@@ -60,4 +60,16 @@ public class RepositorioCaminhao implements repositorioCaminhaoInterface {
         System.out.println("O Caminhão com a placa " + placa + " não foi encontrado!");
         return null;
     }
+
+    @Override
+    public void venderCaminhao(Caminhao caminhao) {
+        removerCaminhao(caminhao);
+        caminhoesVend.add(caminhao);
+    }
+
+    @Override
+    public void desfazerVendaCaminhao(Caminhao caminhao){
+        caminhoesVend.remove(caminhao);
+        cadastrarCaminhao(caminhao);
+    }
 }

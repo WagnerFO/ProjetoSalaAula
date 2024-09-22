@@ -1,6 +1,7 @@
 package View;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import Entidades.*;
@@ -30,66 +31,16 @@ public class MainApp {
 
         Proprietario proprietario = new Proprietario("Maria Silva", 28, "98765432100", "11987654321", "Rua B, 45");
 
-        // Exibir informações do proprietário
-        System.out.println("Proprietário:");
-        System.out.println("Nome: " + proprietario.getNome());
-        System.out.println("Idade: " + proprietario.getIdade());
-        System.out.println("CPF: " + proprietario.getCpf());
-        System.out.println("Telefone: " + proprietario.getTelefoneContato());
-        System.out.println("Endereço: " + proprietario.getEndereco());        
-
-        // Instanciando um novo caminhão
         Caminhao caminhão = new Caminhao("Mercedes", "Actros", "Branco", 2022, "ABC-1234", 250000.0, 15, CaminhaoTipo.truck); 
-        System.out.println("Caminhão:");
-        System.out.println("Marca: " + caminhão.getMarca());
-        System.out.println("Modelo: " + caminhão.getModelo());
-        System.out.println("Cor: " + caminhão.getCor());
-        System.out.println("Ano: " + caminhão.getAno());
-        System.out.println("Placa: " + caminhão.getPlaca());
-        System.out.println("Valor de Venda: " + caminhão.getValorVenda());
-        System.out.println("Toneladas de Carga: " + caminhão.getToneladasCarga()); // Método getToneladasCarga deve existir na classe Caminhao
-
-        // Instanciando um novo carro
+        
         Carro carro = new Carro("Fiat", "Palio", "Preto", 2020, "XYZ-1234", 50000.0, 4, CarroTipo.sedan);
-        System.out.println("\nCarro:");
-        System.out.println("Marca: " + carro.getMarca());
-        System.out.println("Modelo: " + carro.getModelo());
-        System.out.println("Cor: " + carro.getCor());
-        System.out.println("Ano: " + carro.getAno());
-        System.out.println("Placa: " + carro.getPlaca());
-        System.out.println("Valor de Venda: " + carro.getValorVenda());
-        System.out.println("Quantidade de Portas: " + carro.getQuantPortas());
-
-        // Instanciando uma nova moto
         Moto moto = new Moto("Honda", "CBR", "Vermelha", 2021, "ABC-5678", 30000.0, 600, MotoTipo.urbana);
-        System.out.println("\nMoto:");
-        System.out.println("Marca: " + moto.getMarca());
-        System.out.println("Modelo: " + moto.getModelo());
-        System.out.println("Cor: " + moto.getCor());
-        System.out.println("Ano: " + moto.getAno());
-        System.out.println("Placa: " + moto.getPlaca());
-        System.out.println("Valor de Venda: " + moto.getValorVenda());
-        System.out.println("Cilindradas: " + moto.getCilindradas()); // Método getCilindradas deve existir na classe Moto
+       
+        serviceProprietario.cadastrarProprietario(proprietario);
+        serviceCarro.cadastrarCarro(carro);
+        serviceMoto.cadastrarMoto(moto);
+        serviceCaminhao.cadastrarCaminhao(caminhão);
 
-        Venda venda = new Venda(proprietario);
-
-
-        venda.vendaVeiculo(carro);
-        venda.vendaVeiculo(moto);
-        venda.vendaVeiculo(caminhão);
-        
-        serviceVenda.realizarVenda(venda);
-        
-        // Buscar veículo por placa na venda
-        Veiculo veiculoBuscado = serviceVenda.buscarVeiculoNaVenda(venda.getId(), "XYZ-1234");
-        if (veiculoBuscado != null) {
-            System.out.println("Veículo encontrado: " + veiculoBuscado.toString());
-        } else {
-            System.out.println("Veículo não encontrado.");
-        }
-        
-        
-        
         boolean sairMP = false;
         while (!sairMP) {
         exibirMenuPrincipal();
@@ -106,27 +57,33 @@ public class MainApp {
                 case 1:
                     boolean sairCarro = false;
                     while (!sairCarro) {
-                        exibirMenuPrincipal();
+                        exibirMenuCarro();
                         int opcaoCarro = scanner.nextInt();
                         scanner.nextLine(); // Consumir nova linha
                         switch (opcaoCarro) {
                             case 1:
                                 cadastrarCarro();
+                                System.out.println("");
                                 break;
                             case 2:
                                 removerCarro();
+                                System.out.println("");
                                 break;
                             case 3:
                                 atualizarCarro();
+                                System.out.println("");
                                 break;
                             case 4:
                                 buscarCarro();
+                                System.out.println("");
                                 break;
                             case 5: 
                                 ListarCarrosDisponiveis();
+                                System.out.println("");
                                 break;
                             case 6:
                                 ListarCarrosVendidos();
+                                System.out.println("");
                                 break;
                             case 0:
                                 sairCarro=true;
@@ -142,25 +99,31 @@ public class MainApp {
                     while (!sairMoto) {
                         exibirMenuMoto();
                         int opcaoMoto = scanner.nextInt();
-                        scanner.nextLine(); // Consumir nova linha
+                        scanner.nextLine();
                         switch (opcaoMoto) {
                             case 1:
-                                cadastrarCaminhao();
+                                cadastrarMoto();
+                                System.out.println("");
                                 break;
                             case 2:
-                                removerCaminhao();
+                                removerMoto();
+                                System.out.println("");
                                 break;
                             case 3:
-                                atualizarCaminhao();
+                                atualizarMoto();
+                                System.out.println("");
                                 break;
                             case 4:
-                                buscarCaminhao();
+                                buscarMoto();
+                                System.out.println("");
                                 break;
                             case 5:
-                                listarCaminhoesDisponiveis();
+                                listarMotosDisponiveis();
+                                System.out.println("");
                                 break;
                             case 6:
-                                listarCaminhoesVendidos();
+                                listarMotosVendidas();
+                                System.out.println("");
                                 break;
                             case 0:
                                 sairMoto = true;
@@ -176,25 +139,31 @@ public class MainApp {
                     while (!sairCaminhao) {
                         exibirMenuCaminhao();
                         int opcaoCaminhao = scanner.nextInt();
-                        scanner.nextLine(); // Consumir nova linha
+                        scanner.nextLine();
                         switch (opcaoCaminhao) {
                             case 1:
                                 cadastrarCaminhao();
+                                System.out.println("");
                                 break;
                             case 2:
                                 removerCaminhao();
+                                System.out.println("");
                                 break;
                             case 3:
                                 atualizarCaminhao();
+                                System.out.println("");
                                 break;
                             case 4:
                                 buscarCaminhao();
+                                System.out.println("");
                                 break;
                             case 5:
                                 listarCaminhoesDisponiveis();
+                                System.out.println("");
                                 break;
                             case 6:
                                 listarCaminhoesVendidos();
+                                System.out.println("");
                                 break;
                             case 0:
                                 sairCaminhao = true;
@@ -219,22 +188,27 @@ public class MainApp {
                 while (!sairMC) {
                     exibirMenuClientes();
                     int opcaoMC = scanner.nextInt();
-                    scanner.nextLine(); // Consumir nova linha
+                    scanner.nextLine(); 
                     switch (opcaoMC) {
                         case 1:
                         cadastrarCliente();
+                        System.out.println("");
                         break;
                     case 2:
                         removerCliente();
+                        System.out.println("");
                         break;
                     case 3:
                         atualizarCliente();
+                        System.out.println("");
                         break;
                     case 4:
                         buscarCliente();
+                        System.out.println("");
                         break;
                     case 5:
                         listarClientes();
+                        System.out.println("");
                         break;
                     case 0:
                         sairMC = true;
@@ -250,22 +224,53 @@ public class MainApp {
             while (!sairVenda) {
                 exibirMenuVendas();
                 int opcaoVenda = scanner.nextInt();
-                scanner.nextLine(); // Consumir nova linha
+                scanner.nextLine();
                 switch (opcaoVenda) {
                     case 1:
-                        registrarVenda();
-                        break;
+                        boolean sairVendaVeiculos = false;
+                        while (!sairVendaVeiculos) {
+                        exibirMenuVendaVeiculos();
+                        int opcaoVendaVeiculos = scanner.nextInt();
+                        scanner.nextLine();    
+                        switch (opcaoVendaVeiculos) {
+                            case 1:
+                                realizarVendaCarro();
+                                System.out.println("");
+                                break;
+                            case 2:
+                                realizarVendaMoto();
+                                System.out.println("");
+                                break;
+                            case 3:
+                                realizarVendaCaminhao();
+                                System.out.println("");
+                                break;
+                            case 0:
+                                sairVendaVeiculos=true;
+                                System.out.println("");
+                                break;
+                            default:
+                                System.out.println("Opção inválida! Tente Novamente.");
+                                break;
+                            }
+                        }
+                        System.out.println("");
+                        break;                  
                     case 2:
                         removerVenda();
+                        System.out.println("");
                         break;
                     case 3:
                         atualizarVenda();
+                        System.out.println("");
                         break;
                     case 4:
                         buscarVenda();
+                        System.out.println("");
                         break;
                     case 5:
                         listarVendas();
+                        System.out.println("");
                         break;
                     case 0:
                         sairVenda = true;
@@ -275,6 +280,13 @@ public class MainApp {
                         break;
                 }
             }
+            break;
+            case 0:
+                        sairMP = true;
+                        break;
+                    default:
+                        System.out.println("Opção inválida! Tente Novamente.");
+                        break;
 
             }
         }
@@ -322,17 +334,17 @@ public class MainApp {
         carro.setModelo(scanner.nextLine());
         System.out.println("Cor: ");
         carro.setCor(scanner.nextLine());
-        System.out.println(""); 
         System.out.println("Ano: ");
-        carro.setAno(scanner.nextInt());
+        int ano = Integer.parseInt(scanner.nextLine());
+        carro.setAno(ano);
         System.out.println("Placa: ");
         carro.setPlaca(scanner.nextLine());
-        System.out.println("");
         System.out.println("Valor do Carro: ");
-        carro.setValorVenda(scanner.nextDouble());
-        System.out.println("");
+        double valor = Double.parseDouble(scanner.nextLine());
+        carro.setValorVenda(valor);
         System.out.println("Quantidade de Portas: ");
-        carro.setQuantPortas(scanner.nextInt());
+        int porta = Integer.parseInt(scanner.nextLine());
+        carro.setQuantPortas(porta);
         System.out.println("");
 
             CarroTipo tipo = null;
@@ -451,7 +463,7 @@ public class MainApp {
     public static void ListarCarrosVendidos(){
         ArrayList<Carro> carros = serviceCarro.verCarrosVend();  
         if(carros.isEmpty()){
-            System.out.println("Nenhum Carro Disponivel para Venda.");
+            System.out.println("Nenhum Carro Vendido.");
         }else{
             for(Carro c : carros){
                 System.out.println(c);
@@ -787,7 +799,8 @@ public class MainApp {
         System.out.println("Nome: ");
         proprietario.setNome(scanner.nextLine());
         System.out.println("Idade: ");
-        proprietario.setIdade(scanner.nextInt());
+        int idade = Integer.parseInt(scanner.nextLine());
+        proprietario.setIdade(idade);
         System.out.println("CPF: ");
         proprietario.setCpf(scanner.nextLine());
         System.out.println("Telefone de Contato: ");
@@ -806,19 +819,71 @@ public class MainApp {
     
     public static void removerCliente() {
         System.out.println("Digite o CPF do Cliente que Deseja Remover do Sistema: ");
+        String clienteDel = scanner.nextLine();
+        Proprietario delProprietario = serviceProprietario.buscarProprietario(clienteDel);
         
+        if(clienteDel!=null){
+            serviceProprietario.removerProprietario(delProprietario);
+            System.out.println("Cliente Removido com Sucesso. ");
+        }else{
+            System.out.println("Cliente não Encontrado.");
+        }
     }
     
-    public static void atualizarCliente() {
-        // Lógica para atualizar um cliente
+    public static void atualizarCliente() throws Exception {
+        System.out.println("Digite o CPF do Proprietário que você deseja Atualizar:");
+        String cpf = scanner.nextLine();
+        Proprietario proprietarioMudar = serviceProprietario.buscarProprietario(cpf);
+
+        if (proprietarioMudar != null) {
+            System.out.println("Digite o Novo Nome: ");
+            String nome = scanner.nextLine();
+            System.out.println("Digite a Nova Idade: ");
+            int idade = Integer.parseInt(scanner.nextLine());
+            System.out.println("Digite o Novo Telefone de Contato: ");
+            String telefoneContato = scanner.nextLine();
+            System.out.println("Digite o Novo Endereço: ");
+            String endereco = scanner.nextLine();
+            
+            proprietarioMudar.setNome(nome);
+            proprietarioMudar.setIdade(idade);
+            proprietarioMudar.setTelefoneContato(telefoneContato);
+            proprietarioMudar.setEndereco(endereco);
+
+            try {
+                serviceProprietario.atualizarProprietario(proprietarioMudar);
+                System.out.println("Cliente Atualizado com Sucesso!");
+            } catch (Exception e) {
+                System.out.println("Erro ao Atualizar Cliente! " + e.getMessage());
+            }
+        } else {
+            System.out.println("Cliente não Encontrado!");
+        }
     }
+
     
     public static void buscarCliente() {
-        // Lógica para buscar um cliente
+
+        System.out.println("Digite o CPF do Cliente que você deseja Buscar:");
+        String cpf = scanner.nextLine();
+        Proprietario clienteBuscar = serviceProprietario.buscarProprietario(cpf);
+
+        if(clienteBuscar!=null){
+            System.out.println("Cliente Encntrado"+clienteBuscar.getNome());
+        }else{
+            System.out.println("Cliente não Encontrado!");
+        }
     }
     
     public static void listarClientes() {
-        // Lógica para listar todos os clientes
+        ArrayList<Proprietario> proprietarios = serviceProprietario.verProprietario();
+        if(proprietarios.isEmpty()){
+            System.out.println("Não há Clientes Cadastrados.");
+        }else{
+            for(Proprietario p : proprietarios){
+                System.out.println(p);
+            }
+        }
     }
     
 
@@ -833,27 +898,144 @@ public class MainApp {
         System.out.println("0. Sair");
     }
 
-    
-    public static void registrarVenda() {
-        // Lógica para registrar uma venda
+    public static void exibirMenuVendaVeiculos() {
+        System.out.println("\n### VENDA VEICULOS ###");
+        System.out.println("");
+        System.out.println("1. Vender Carro");
+        System.out.println("2. Vender Moto");
+        System.out.println("3. Vender Caminhão");
+        System.out.println("0. Sair");
     }
     
+    public static void realizarVendaCarro() {
+        System.out.println("Digite o CPF do Cliente: ");
+        String cpf = scanner.nextLine();
+        Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
+
+        if(proprietario == null){
+            System.out.println("Cliente não Cadastrado no Sistema. Impossível Realizar Venda!");
+            return;
+        }
+
+        System.out.println("Digite a Placa do Carro: ");
+        String placa = scanner.nextLine();
+
+        try{
+            serviceVenda.venderCarro(placa, proprietario);
+            System.out.println("Carro Vendido com Sucesso! ");
+        }catch(Exception e){
+            System.out.println("Houve um Erro ao Realizar a Venda do Carro. "+e.getMessage());
+        }
+    }
+    
+    public static void realizarVendaMoto() {
+        System.out.println("Digite o CPF do Cliente: ");
+        String cpf = scanner.nextLine();
+        Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
+
+        if(proprietario == null){
+            System.out.println("Cliente não Cadastrado no Sistema. Impossível Realizar Venda!");
+            return;
+        }
+
+        System.out.println("Digite a Placa do Moto: ");
+        String placa = scanner.nextLine();
+
+        try{
+            serviceVenda.venderMoto(placa, proprietario);
+            System.out.println("Moto Vendida com Sucesso! ");
+        }catch(Exception e){
+            System.out.println("Houve um Erro ao Realizar a Venda da Moto. "+e.getMessage());
+        }
+    }
+
+    public static void realizarVendaCaminhao() {
+        System.out.println("Digite o CPF do Cliente: ");
+        String cpf = scanner.nextLine();
+        Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
+
+        if(proprietario == null){
+            System.out.println("Cliente não Cadastrado no Sistema. Impossível Realizar Venda!");
+            return;
+        }
+
+        System.out.println("Digite a Placa do Caminhão: ");
+        String placa = scanner.nextLine();
+
+        try{
+            serviceVenda.venderCaminhao(placa, proprietario);
+            System.out.println("Caminhão Vendido com Sucesso! ");
+        }catch(Exception e){
+            System.out.println("Houve um Erro ao Realizar a Venda do Caminhão. "+e.getMessage());
+        }
+    }
+
     public static void removerVenda() {
-        // Lógica para remover uma venda
+        System.out.println("Digite o ID da Venda a ser removida: ");
+        int id = Integer.parseInt(scanner.nextLine());
+    
+        try {
+            serviceVenda.removerVenda(id);
+            System.out.println("Venda removida com sucesso!");
+        } catch (Exception e) {
+            System.out.println("Erro ao remover venda: " + e.getMessage());
+        }
     }
     
     public static void atualizarVenda() {
-        // Lógica para atualizar uma venda
+        System.out.println("Digite o ID da Venda a ser atualizada: ");
+        int id = Integer.parseInt(scanner.nextLine());
+    
+        Venda vendaExistente = serviceVenda.buscarVendaPorId(id);
+        if (vendaExistente == null) {
+            System.out.println("Venda não encontrada.");
+            return;
+        }
+    
+        System.out.println("Digite o CPF do novo proprietário (ou mantenha o anterior): ");
+        String cpfNovo = scanner.nextLine();
+        Proprietario novoProprietario = serviceProprietario.buscarProprietario(cpfNovo);
+    
+        vendaExistente.setProprietario(novoProprietario);
+    
+        try {
+            serviceVenda.atualizarVenda(id, vendaExistente);
+            System.out.println("Venda atualizada com sucesso!");
+        } catch (Exception e) {
+            System.out.println("Erro ao atualizar venda: " + e.getMessage());
+        }
     }
     
     public static void buscarVenda() {
-        // Lógica para buscar uma venda
+        System.out.println("Digite o ID da Venda: ");
+        int id = Integer.parseInt(scanner.nextLine());
+    
+        Venda venda = serviceVenda.buscarVendaPorId(id);
+        if (venda != null) {
+            System.out.println("Venda ID: " + venda.getId() + " - Proprietário: " + venda.getProprietario().getNome());
+            System.out.println("Veículos Vendidos: ");
+            for (Veiculo veiculo : venda.getVeiculosVendidos()) {
+                System.out.println(" - " + veiculo.getPlaca() + " (" + veiculo.getClass().getSimpleName() + ")");
+            }
+        } else {
+            System.out.println("Venda não encontrada.");
+        }
     }
     
     public static void listarVendas() {
-        // Lógica para listar todas as vendas
-    }
-    
-
+        List<Venda> vendas = serviceVenda.listarVendas();
+        if (vendas.isEmpty()) {
+            System.out.println("Nenhuma venda registrada.");
+        } else {
+            for (Venda venda : vendas) {
+                System.out.println("Venda ID: " + venda.getId() + " - Proprietário: " + venda.getProprietario().getNome());
+                System.out.println("Veículos Vendidos: ");
+                for (Veiculo veiculo : venda.getVeiculosVendidos()) {
+                    System.out.println(" - " + veiculo.getPlaca() + " (" + veiculo.getClass().getSimpleName() + ")");
+                }
+            }
+        }
+    }    
 }
+
 

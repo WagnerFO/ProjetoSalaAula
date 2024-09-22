@@ -1,7 +1,6 @@
 package IRepositorio;
 
 import java.util.ArrayList;
-
 import Entidades.Carro;
 
 public interface repositorioCarroInterface {
@@ -11,5 +10,6 @@ public interface repositorioCarroInterface {
     ArrayList<Carro> verCarrosDisp();
     ArrayList<Carro> verCarrosVend();
     public Carro buscarCarroPorPlaca(String placa);
-
+    void venderCarro(Carro carro);
+    void desfazerVendaCarro(Carro carro);
 }

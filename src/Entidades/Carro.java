@@ -4,20 +4,29 @@ import Entidades.Enum.CarroTipo;
 
 public class Carro extends Veiculo {
 
+    private static int nextId = 1;
+
+	private int id;
     private int quantPortas;
     private CarroTipo tipo;
  
 
     public Carro() {
         super();
+        this.id=nextId++;
     }
 
     public Carro(String marca, String modelo, String cor, int ano,String placa, double valorVenda, int quantPortas, CarroTipo tipo) {
-		super(marca, modelo, cor, ano,placa, valorVenda);
+        super(marca, modelo, cor, ano,placa, valorVenda);
+        this.id=nextId++;
         this.quantPortas=quantPortas;
         this.tipo=tipo;
 	}
     
+    public int getId() {
+        return id;
+    }
+
     public CarroTipo getTipo() {
         return tipo;
     }

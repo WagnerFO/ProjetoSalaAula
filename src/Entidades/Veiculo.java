@@ -2,10 +2,7 @@ package Entidades;
 
 public abstract class  Veiculo {
 
-	private static int nextId = 1;
-
-	private int id;
-    private  String marca;
+    private String marca;
     private String modelo;
     private String cor;
     private int ano;
@@ -14,11 +11,9 @@ public abstract class  Veiculo {
 	
 
     public Veiculo(){
-		this.id=nextId++;
     }
 
     public Veiculo(String marca, String modelo, String cor, int ano, String placa, double valorVenda){
-        this.id=nextId++;
 		this.marca=marca;
         this.modelo=modelo;
         this.cor=cor;
@@ -26,10 +21,6 @@ public abstract class  Veiculo {
 		this.placa=placa;
 		this.valorVenda=valorVenda;
     }
-
-    public int getId() {
-		return id;
-	}
 
 	public String getMarca() {
 		return marca;

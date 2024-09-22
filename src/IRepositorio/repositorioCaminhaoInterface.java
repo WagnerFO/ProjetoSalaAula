@@ -10,4 +10,6 @@ public interface repositorioCaminhaoInterface {
     ArrayList<Caminhao> verCaminhoesDisp();
     ArrayList<Caminhao> verCaminhoesVend();
     public Caminhao buscarCaminhaoPorPlaca(String placa);
+    void venderCaminhao(Caminhao caminhao);
+    void desfazerVendaCaminhao(Caminhao caminhao);
 }

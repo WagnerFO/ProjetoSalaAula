@@ -25,6 +25,10 @@ public class Venda {
         return proprietario;
     }
 
+    public void setProprietario(Proprietario proprietario) {
+        this.proprietario = proprietario;
+    }
+
     public List<Veiculo> getVeiculosVendidos(){
         return veiculosVendidosPorCliente;
     }

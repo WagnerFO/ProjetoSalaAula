@@ -26,11 +26,7 @@ public class RepositorioCarro implements repositorioCarroInterface{
 
 	@Override
 	public void removerCarro(Carro carro) {
-		if(carrosDisp.remove(carro)){
-			carrosVend.add(carro);
-		}else{
-			System.out.println("Carro não encontrado.");
-		}		
+		carrosDisp.remove(carro);
 	}
 
 	@Override
@@ -51,8 +47,6 @@ public class RepositorioCarro implements repositorioCarroInterface{
 				System.out.println("O Carro com a placa "+placa+" está disponivel");
 				return carro;
 			}
-		}
-		for(Carro carro : carrosVend){
 			if(carro.getPlaca().equals(placa)){
 				System.out.println("O Carro com a placa "+placa+" já foi vendido");
 				return carro;
@@ -63,5 +57,15 @@ public class RepositorioCarro implements repositorioCarroInterface{
 	}
 
 	
+	public void venderCarro(Carro carro) {
+		removerCarro(carro);
+		carrosVend.add(carro);
+	}
 
+	@Override
+	public void desfazerVendaCarro(Carro carro){
+		carrosVend.remove(carro);
+		cadastrarCarro(carro);
+	}
+	
 }

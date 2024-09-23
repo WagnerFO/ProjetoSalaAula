@@ -12,7 +12,6 @@ public class ServiceCaminhao implements serviceCaminhaoInterface {
 
     public ServiceCaminhao(repositorioCaminhaoInterface caminhaoRepositorio) {
         this.caminhaoRepositorio = caminhaoRepositorio;
-        System.out.println("RepositorioCaminhao inicializado: " + (this.caminhaoRepositorio != null));
     }
 
     @Override

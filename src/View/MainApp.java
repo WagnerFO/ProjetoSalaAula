@@ -46,21 +46,21 @@ public class MainApp {
         while (!sairMP) {
         exibirMenuPrincipal();
         int opcaoMP = scanner.nextInt();
-        scanner.nextLine(); // Consumir nova linha
+        scanner.nextLine(); 
         switch (opcaoMP) {
             case 1:
             boolean sairMV = false;
             while (!sairMV) {
             exibirMenuVeiculo();
             int opcaoMV = scanner.nextInt();
-            scanner.nextLine(); // Consumir nova linha
+            scanner.nextLine(); 
             switch (opcaoMV) {
                 case 1:
                     boolean sairCarro = false;
                     while (!sairCarro) {
                         exibirMenuCarro();
                         int opcaoCarro = scanner.nextInt();
-                        scanner.nextLine(); // Consumir nova linha
+                        scanner.nextLine(); 
                         switch (opcaoCarro) {
                             case 1:
                                 cadastrarCarro();
@@ -185,34 +185,34 @@ public class MainApp {
             }
             break;
             case 2:
-                boolean sairMC = false;
-                while (!sairMC) {
-                    exibirMenuClientes();
-                    int opcaoMC = scanner.nextInt();
+                boolean sairMProprietario = false;
+                while (!sairMProprietario) {
+                    exibirMenuProprietarios();
+                    int opcaoMProprietario = scanner.nextInt();
                     scanner.nextLine(); 
-                    switch (opcaoMC) {
+                    switch (opcaoMProprietario) {
                         case 1:
-                        cadastrarCliente();
+                        cadastrarProprietario();
                         System.out.println("");
                         break;
                     case 2:
-                        removerCliente();
+                        removerProprietario();
                         System.out.println("");
                         break;
                     case 3:
-                        atualizarCliente();
+                        atualizarProprietario();
                         System.out.println("");
                         break;
                     case 4:
-                        buscarCliente();
+                        buscarProprietario();
                         System.out.println("");
                         break;
                     case 5:
-                        listarClientes();
+                        listarProprietarios();
                         System.out.println("");
                         break;
                     case 0:
-                        sairMC = true;
+                        sairMProprietario = true;
                         System.out.println("");
                         break;
                     default:
@@ -374,24 +374,32 @@ public class MainApp {
         }
     }
 
-    public static void removerCarro(){
-        System.out.println("\n"+"Digite a Placa do Carro que Deseja Remover");
+    public static void removerCarro() {
+        System.out.println("\nDigite a Placa do Carro que Deseja Remover:");
         String placaDel = scanner.nextLine();
-        Carro deletarCarro = serviceCarro.buscarCarro(placaDel);
-        if(placaDel !=null){
+        try {
+            Carro deletarCarro = serviceCarro.buscarCarro(placaDel);
+            if (deletarCarro == null) {
+                throw new CarroNaoEncontradoException("O carro com a placa " + placaDel + " não foi encontrado");
+            }
             serviceCarro.removerCarro(deletarCarro);
-            System.out.println("\n"+"Carro Removido com Sucesso!");
-        }
-        else{
-            System.err.println("\n"+"Carro não encontrado!");
+            System.out.println("\nCarro removido com sucesso!");
+        } catch (CarroNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
         }
     }
 
     public static void atualizarCarro() throws Exception{
         System.out.println("Digite a Placa do Veiculo que você deseja Atualizar");
         String placa = scanner.nextLine();
-        Carro  carroMudar = serviceCarro.buscarCarro(placa);
-        if(carroMudar!=null){
+        try{
+            Carro  carroMudar = serviceCarro.buscarCarro(placa);
+            if(carroMudar==null){
+            throw new CarroNaoEncontradoException("\n"+"O Carro com a placa "+placa+" não foi encotrado.");
+            }
+
             System.out.println("Digite a Nova Marca: ");
             String marca = scanner.nextLine();
             System.out.println("Digite o Novo Modelo: ");
@@ -406,10 +414,9 @@ public class MainApp {
             double valor = Double.parseDouble(scanner.nextLine());
             System.out.println("Digite a Quantidade de Portas: ");
             int qntPorta = Integer.parseInt(scanner.nextLine());
-            
+                
             CarroTipo tipo = null;
             boolean tipoValido=false;
-
             while (!tipoValido) {
                 System.out.println("Qual Tipo do Carro: Hatch / Sedan / SUV / Sport: ");
                 String tipoCarro = scanner.nextLine().toLowerCase();
@@ -418,7 +425,7 @@ public class MainApp {
                     tipo = CarroTipo.valueOf(tipoCarro);
                     tipoValido = true;
                 }catch(IllegalArgumentException e){
-                    System.out.println("Tipo Inválido, Por Favor Insira um Tipo Válido (Hatch, Sedan, SUV, Sport). ");
+                   System.out.println("Tipo Inválido, Por Favor Insira um Tipo Válido (Hatch, Sedan, SUV, Sport). ");
                 }
             }
 
@@ -431,11 +438,13 @@ public class MainApp {
             carroMudar.setQuantPortas(qntPorta);
             carroMudar.setTipo(tipo);
 
-
-            System.out.println("\n"+"Carro Alterado com Sucesso.");
             serviceCarro.alterarCarro(carroMudar);
-        }else{
-            System.out.println("\n"+"Carro não encotrado.");
+            System.out.println("\n"+"Carro Alterado com Sucesso.");
+                
+        }catch(CarroNaoEncontradoException e){
+            System.out.println("Erro: "+e.getMessage());
+        }catch(Exception e){
+            System.out.println("Ocorreu um Erro Inexperado: "+e.getMessage());
         }
     }
 
@@ -454,6 +463,7 @@ public class MainApp {
                 System.out.println("O carro com a placa "+placa+"já foi Vendido.");
             }else{
                 System.out.println("O carro com a placa "+placa+" está Disponivel.");
+                System.out.println(encontarCarro);
             }
         }catch(CarroNaoEncontradoException e){
             System.out.println("Erro: "+e.getMessage());
@@ -525,22 +535,31 @@ public class MainApp {
     }
     
     public static void removerMoto() {
-        System.out.println("\nDigite a Placa da Moto que Deseja Remover");
+        System.out.println("\nDigite a Placa da Moto que Deseja Remover:");
         String placaDel = scanner.nextLine();
-        Moto deletarMoto = serviceMoto.buscarMoto(placaDel);
-        if (deletarMoto != null) {
+        try {
+            Moto deletarMoto = serviceMoto.buscarMoto(placaDel);
+            if (deletarMoto == null) {
+                throw new MotoNaoEncontradaException("A moto com a placa " + placaDel + " não foi encontrada");
+            }
             serviceMoto.removerMoto(deletarMoto);
-            System.out.println("\nMoto Removida com Sucesso!");
-        } else {
-            System.err.println("\nMoto não encontrada!");
+            System.out.println("\nMoto removida com sucesso!");
+        } catch (MotoNaoEncontradaException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
         }
     }
     
     public static void atualizarMoto() throws Exception {
         System.out.println("Digite a Placa da Moto que você deseja Atualizar");
         String placa = scanner.nextLine();
-        Moto motoMudar = serviceMoto.buscarMoto(placa);
-        if (motoMudar != null) {
+        try {
+            Moto motoMudar = serviceMoto.buscarMoto(placa);
+            if (motoMudar == null) {
+                throw new MotoNaoEncontradaException("\nA Moto com a placa " + placa + " não foi encontrada.");
+            }
+    
             System.out.println("Digite a Nova Marca: ");
             String marca = scanner.nextLine();
             System.out.println("Digite o Novo Modelo: ");
@@ -553,6 +572,22 @@ public class MainApp {
             String placaMoto = scanner.nextLine();
             System.out.println("Digite o Novo Valor: ");
             double valor = Double.parseDouble(scanner.nextLine());
+            System.out.println("Digite as Cilindradas: ");
+            int cilindradas = Integer.parseInt(scanner.nextLine());
+    
+            MotoTipo tipo = null;
+            boolean tipoValido = false;
+            while (!tipoValido) {
+                System.out.println("Qual Tipo da Moto: Trilha / Urbana / Sport: ");
+                String tipoMoto = scanner.nextLine().toLowerCase();
+    
+                try {
+                    tipo = MotoTipo.valueOf(tipoMoto);
+                    tipoValido = true;
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Tipo Inválido, Por Favor Insira um Tipo Válido (Trilha, Urbana, Sport).");
+                }
+            }
     
             motoMudar.setMarca(marca);
             motoMudar.setModelo(modelo);
@@ -560,11 +595,15 @@ public class MainApp {
             motoMudar.setAno(ano);
             motoMudar.setPlaca(placaMoto);
             motoMudar.setValorVenda(valor);
+            motoMudar.setCilindradas(cilindradas);
+            motoMudar.setTipo(tipo);
     
-            System.out.println("\nMoto Alterada com Sucesso.");
             serviceMoto.alterarMoto(motoMudar);
-        } else {
-            System.out.println("\nMoto não encontrada.");
+            System.out.println("\nMoto Alterada com Sucesso.");
+        } catch (MotoNaoEncontradaException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um Erro Inesperado: " + e.getMessage());
         }
     }
     
@@ -576,21 +615,22 @@ public class MainApp {
             Moto encontrarMoto = serviceMoto.buscarMoto(placa);
     
             if (encontrarMoto == null) {
-                throw new MotoNaoEncontradoException("A moto com a placa " + placa + " não foi encontrada.");
+                throw new MotoNaoEncontradaException("A moto com a placa " + placa + " não foi encontrada");
             }
     
             if (serviceMoto.verMotosVend().contains(encontrarMoto)) {
-                System.out.println("A moto com a placa " + placa + " já foi vendida.");
+                System.out.println("A moto com a placa " + placa + " já foi Vendida.");
             } else {
-                System.out.println("A moto com a placa " + placa + " está disponível.");
+                System.out.println("A moto com a placa " + placa + " está Disponível.");
+                System.out.println(encontrarMoto);
             }
-        } catch (MotoNaoEncontradoException e) {
+        } catch (MotoNaoEncontradaException e) {
             System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
+            System.out.println("Ocorreu um Erro Inesperado: " + e.getMessage());
         }
     }
-    
+        
     
     public static void listarMotosDisponiveis() {
         ArrayList<Moto> motos = serviceMoto.verMotosDisp();
@@ -657,22 +697,31 @@ public class MainApp {
     }
     
     public static void removerCaminhao() {
-        System.out.println("\nDigite a Placa do Caminhão que Deseja Remover");
+        System.out.println("\nDigite a Placa do Caminhão que Deseja Remover:");
         String placaDel = scanner.nextLine();
-        Caminhao deletarCaminhao = serviceCaminhao.buscarCaminhao(placaDel);
-        if (deletarCaminhao != null) {
+        try {
+            Caminhao deletarCaminhao = serviceCaminhao.buscarCaminhao(placaDel);
+            if (deletarCaminhao == null) {
+                throw new CaminhaoNaoEncontradoException("O caminhão com a placa " + placaDel + " não foi encontrado");
+            }
             serviceCaminhao.removerCaminhao(deletarCaminhao);
-            System.out.println("\nCaminhão Removido com Sucesso!");
-        } else {
-            System.err.println("\nCaminhão não encontrado!");
+            System.out.println("\nCaminhão removido com sucesso!");
+        } catch (CaminhaoNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
         }
     }
     
     public static void atualizarCaminhao() throws Exception {
         System.out.println("Digite a Placa do Caminhão que você deseja Atualizar");
         String placa = scanner.nextLine();
-        Caminhao caminhaoMudar = serviceCaminhao.buscarCaminhao(placa);
-        if (caminhaoMudar != null) {
+        try {
+            Caminhao caminhaoMudar = serviceCaminhao.buscarCaminhao(placa);
+            if (caminhaoMudar == null) {
+                throw new CaminhaoNaoEncontradoException("\nO Caminhão com a placa " + placa + " não foi encontrado.");
+            }
+    
             System.out.println("Digite a Nova Marca: ");
             String marca = scanner.nextLine();
             System.out.println("Digite o Novo Modelo: ");
@@ -685,8 +734,22 @@ public class MainApp {
             String placaCaminhao = scanner.nextLine();
             System.out.println("Digite o Novo Valor: ");
             double valor = Double.parseDouble(scanner.nextLine());
-            System.out.println("Digite a Nova Capacidade de Carga (em toneladas): ");
-            double carga = Double.parseDouble(scanner.nextLine());
+            System.out.println("Digite a Tonelagem de Carga: ");
+            double toneladasCarga = Double.parseDouble(scanner.nextLine());
+    
+            CaminhaoTipo tipo = null;
+            boolean tipoValido = false;
+            while (!tipoValido) {
+                System.out.println("Qual Tipo do Caminhão: Truck / Bitruck / Carreta: ");
+                String tipoCaminhao = scanner.nextLine().toLowerCase();
+    
+                try {
+                    tipo = CaminhaoTipo.valueOf(tipoCaminhao);
+                    tipoValido = true;
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Tipo Inválido, Por Favor Insira um Tipo Válido (Truck, Bitruck, Carreta).");
+                }
+            }
     
             caminhaoMudar.setMarca(marca);
             caminhaoMudar.setModelo(modelo);
@@ -694,12 +757,15 @@ public class MainApp {
             caminhaoMudar.setAno(ano);
             caminhaoMudar.setPlaca(placaCaminhao);
             caminhaoMudar.setValorVenda(valor);
-            caminhaoMudar.setToneladasCarga(carga);
+            caminhaoMudar.setToneladasCarga(toneladasCarga);
+            caminhaoMudar.setTipo(tipo);
     
-            System.out.println("\nCaminhão Alterado com Sucesso.");
             serviceCaminhao.alterarCaminhao(caminhaoMudar);
-        } else {
-            System.out.println("\nCaminhão não encontrado.");
+            System.out.println("\nCaminhão Alterado com Sucesso.");
+        } catch (CaminhaoNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um Erro Inesperado: " + e.getMessage());
         }
     }
     
@@ -711,21 +777,22 @@ public class MainApp {
             Caminhao encontrarCaminhao = serviceCaminhao.buscarCaminhao(placa);
     
             if (encontrarCaminhao == null) {
-                throw new CarroNaoEncontradoException("O caminhão com a placa " + placa + " não foi encontrado.");
+                throw new CaminhaoNaoEncontradoException("O caminhão com a placa " + placa + " não foi encontrado");
             }
     
             if (serviceCaminhao.verCaminhoesVend().contains(encontrarCaminhao)) {
-                System.out.println("O caminhão com a placa " + placa + " já foi vendido.");
+                System.out.println("O caminhão com a placa " + placa + " já foi Vendido.");
             } else {
-                System.out.println("O caminhão com a placa " + placa + " está disponível.");
+                System.out.println("O caminhão com a placa " + placa + " está Disponível.");
+                System.out.println(encontrarCaminhao);
             }
-        } catch (CarroNaoEncontradoException e) {
+        } catch (CaminhaoNaoEncontradoException e) {
             System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
+            System.out.println("Ocorreu um Erro Inesperado: " + e.getMessage());
         }
     }
-    
+        
     
     public static void listarCaminhoesDisponiveis() {
         ArrayList<Caminhao> caminhoes = serviceCaminhao.verCaminhoesDisp();
@@ -750,18 +817,18 @@ public class MainApp {
     }
     
 
-    public static void exibirMenuClientes() {
-        System.out.println("\n### MENU-CLIENTES ###");
+    public static void exibirMenuProprietarios() {
+        System.out.println("\n### MENU-PROPRIETÁRIOS ###");
         System.out.println("");
-        System.out.println("1. Cadastrar Cliente");
-        System.out.println("2. Remover Cliente");
-        System.out.println("3. Atualizar Cliente");
-        System.out.println("4. Buscar Cliente");
-        System.out.println("5. Listar Clientes");
+        System.out.println("1. Cadastrar Proprietário");
+        System.out.println("2. Remover Proprietário");
+        System.out.println("3. Atualizar Proprietário");
+        System.out.println("4. Buscar Proprietário");
+        System.out.println("5. Listar Proprietários");
         System.out.println("0. Sair");
     }
     
-    public static void cadastrarCliente() throws Exception {
+    public static void cadastrarProprietario() throws Exception {
         Proprietario proprietario = new Proprietario();
         System.out.println("Cadastrando Novo Proprietário no Sistema: ");
         System.out.println("Nome: ");
@@ -775,35 +842,47 @@ public class MainApp {
         proprietario.setTelefoneContato(scanner.next());
         System.out.println("Endereço: ");
         proprietario.setEndereco(scanner.nextLine());
-        proprietario.setEndereco(scanner.nextLine()); 
-
+        proprietario.setEndereco(scanner.nextLine());
+    
         try {
             serviceProprietario.cadastrarProprietario(proprietario);
-                System.out.println("Proprietário Adicionado com Sucesso!");
-            } catch (Exception e) {
-                System.out.println("Erro ao Adicionar Proprietário! " + e.getMessage());
-            }
-        }
-    
-    public static void removerCliente() {
-        System.out.println("Digite o CPF do Cliente que Deseja Remover do Sistema: ");
-        String clienteDel = scanner.nextLine();
-        Proprietario delProprietario = serviceProprietario.buscarProprietario(clienteDel);
-        
-        if(clienteDel!=null){
-            serviceProprietario.removerProprietario(delProprietario);
-            System.out.println("Cliente Removido com Sucesso. ");
-        }else{
-            System.out.println("Cliente não Encontrado.");
+            System.out.println("Proprietário Adicionado com Sucesso!");
+        } catch (Exception e) {
+            System.out.println("Erro ao Adicionar Proprietário! " + e.getMessage());
         }
     }
     
-    public static void atualizarCliente() throws Exception {
+    public static void removerProprietario() {
+        System.out.println("Digite o CPF do Proprietário que Deseja Remover do Sistema: ");
+        String cpfDel = scanner.nextLine();
+    
+        try {
+            Proprietario delProprietario = serviceProprietario.buscarProprietario(cpfDel);
+    
+            if (delProprietario == null) {
+                throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpfDel + " não foi encontrado.");
+            }
+    
+            serviceProprietario.removerProprietario(delProprietario);
+            System.out.println("Proprietário Removido com Sucesso.");
+        } catch (ProprietarioNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
+        }
+    }
+    
+    public static void atualizarProprietario() {
         System.out.println("Digite o CPF do Proprietário que você deseja Atualizar:");
         String cpf = scanner.nextLine();
-        Proprietario proprietarioMudar = serviceProprietario.buscarProprietario(cpf);
-
-        if (proprietarioMudar != null) {
+    
+        try {
+            Proprietario proprietarioMudar = serviceProprietario.buscarProprietario(cpf);
+    
+            if (proprietarioMudar == null) {
+                throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
+            }
+    
             System.out.println("Digite o novo CPF: ");
             String newCpf = scanner.nextLine();
             System.out.println("Digite o Novo Nome: ");
@@ -814,50 +893,53 @@ public class MainApp {
             String telefoneContato = scanner.nextLine();
             System.out.println("Digite o Novo Endereço: ");
             String endereco = scanner.nextLine();
-            
+    
             proprietarioMudar.setCpf(newCpf);
             proprietarioMudar.setNome(nome);
             proprietarioMudar.setIdade(idade);
             proprietarioMudar.setTelefoneContato(telefoneContato);
             proprietarioMudar.setEndereco(endereco);
-
-            try {
-                serviceProprietario.atualizarProprietario(proprietarioMudar);
-                System.out.println("Cliente Atualizado com Sucesso!");
-            } catch (Exception e) {
-                System.out.println("Erro ao Atualizar Cliente! " + e.getMessage());
-            }
-        } else {
-            System.out.println("Cliente não Encontrado!");
+    
+            serviceProprietario.atualizarProprietario(proprietarioMudar);
+            System.out.println("Proprietário Atualizado com Sucesso!");
+    
+        } catch (ProprietarioNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
         }
     }
-
     
-    public static void buscarCliente() {
-
-        System.out.println("Digite o CPF do Cliente que você deseja Buscar:");
+    public static void buscarProprietario() {
+        System.out.println("Digite o CPF do Proprietário que você deseja Buscar:");
         String cpf = scanner.nextLine();
-        Proprietario clienteBuscar = serviceProprietario.buscarProprietario(cpf);
-
-        if(clienteBuscar!=null){
-            System.out.println("Cliente Encntrado"+clienteBuscar.getNome());
-        }else{
-            System.out.println("Cliente não Encontrado!");
+    
+        try {
+            Proprietario proprietarioBuscar = serviceProprietario.buscarProprietario(cpf);
+    
+            if (proprietarioBuscar == null) {
+                throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
+            }
+    
+            System.out.println("Proprietário Encontrado: " + proprietarioBuscar.getNome());
+        } catch (ProprietarioNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
         }
     }
     
-    public static void listarClientes() {
+    public static void listarProprietarios() {
         ArrayList<Proprietario> proprietarios = serviceProprietario.verProprietario();
         if(proprietarios.isEmpty()){
-            System.out.println("Não há Clientes Cadastrados.");
-        }else{
+            System.out.println("Não há Proprietários Cadastrados.");
+        } else {
             for(Proprietario p : proprietarios){
                 System.out.println(p);
             }
         }
     }
     
-
     public static void exibirMenuVendas() {
         System.out.println("\n### MENU-VENDAS ###");
         System.out.println("");
@@ -868,7 +950,7 @@ public class MainApp {
         System.out.println("5. Listar Vendas");
         System.out.println("0. Sair");
     }
-
+    
     public static void exibirMenuVendaVeiculos() {
         System.out.println("\n### VENDA VEICULOS ###");
         System.out.println("");
@@ -879,75 +961,118 @@ public class MainApp {
     }
     
     public static void realizarVendaCarro() {
-        System.out.println("Digite o CPF do Cliente: ");
+        System.out.println("Digite o CPF do Proprietário: ");
         String cpf = scanner.nextLine();
-        Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
-
-        if(proprietario == null){
-            System.out.println("Cliente não Cadastrado no Sistema. Impossível Realizar Venda!");
-            return;
-        }
-
-        System.out.println("Digite a Placa do Carro: ");
-        String placa = scanner.nextLine();
-
-        try{
+    
+        try {
+            Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
+    
+            if (proprietario == null) {
+                throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
+            }
+    
+            System.out.println("Digite a Placa do Carro: ");
+            String placa = scanner.nextLine();
+    
+            Carro carro = serviceCarro.buscarCarro(placa); // Busca pelo carro
+    
+            if (carro == null) {
+                throw new CarroNaoEncontradoException("Carro com a placa " + placa + " não foi encontrado.");
+            }
+    
             serviceVenda.venderCarro(placa, proprietario);
-            System.out.println("Carro Vendido com Sucesso! ");
-        }catch(Exception e){
-            System.out.println("Houve um Erro ao Realizar a Venda do Carro. "+e.getMessage());
+            System.out.println("Carro vendido com sucesso!");
+    
+        } catch (ProprietarioNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (CarroNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro inesperado ao realizar a venda: " + e.getMessage());
         }
     }
     
     public static void realizarVendaMoto() {
-        System.out.println("Digite o CPF do Cliente: ");
+        System.out.println("Digite o CPF do Proprietário: ");
         String cpf = scanner.nextLine();
-        Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
-
-        if(proprietario == null){
-            System.out.println("Cliente não Cadastrado no Sistema. Impossível Realizar Venda!");
-            return;
-        }
-
-        System.out.println("Digite a Placa do Moto: ");
-        String placa = scanner.nextLine();
-
-        try{
+    
+        try {
+            Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
+    
+            if (proprietario == null) {
+                throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
+            }
+    
+            System.out.println("Digite a Placa da Moto: ");
+            String placa = scanner.nextLine();
+    
+            Moto moto = serviceMoto.buscarMoto(placa); // Busca pela moto
+    
+            if (moto == null) {
+                throw new MotoNaoEncontradaException("Moto com a placa " + placa + " não foi encontrada.");
+            }
+    
             serviceVenda.venderMoto(placa, proprietario);
-            System.out.println("Moto Vendida com Sucesso! ");
-        }catch(Exception e){
-            System.out.println("Houve um Erro ao Realizar a Venda da Moto. "+e.getMessage());
+            System.out.println("Moto vendida com sucesso!");
+    
+        } catch (ProprietarioNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (MotoNaoEncontradaException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro inesperado ao realizar a venda: " + e.getMessage());
         }
     }
-
+    
     public static void realizarVendaCaminhao() {
-        System.out.println("Digite o CPF do Cliente: ");
+        System.out.println("Digite o CPF do Proprietário: ");
         String cpf = scanner.nextLine();
-        Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
-
-        if(proprietario == null){
-            System.out.println("Cliente não Cadastrado no Sistema. Impossível Realizar Venda!");
-            return;
-        }
-
-        System.out.println("Digite a Placa do Caminhão: ");
-        String placa = scanner.nextLine();
-
-        try{
+    
+        try {
+            Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
+    
+            if (proprietario == null) {
+                throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
+            }
+    
+            System.out.println("Digite a Placa do Caminhão: ");
+            String placa = scanner.nextLine();
+    
+            Caminhao caminhao = serviceCaminhao.buscarCaminhao(placa); // Busca pelo caminhão
+    
+            if (caminhao == null) {
+                throw new CaminhaoNaoEncontradoException("Caminhão com a placa " + placa + " não foi encontrado.");
+            }
+    
             serviceVenda.venderCaminhao(placa, proprietario);
-            System.out.println("Caminhão Vendido com Sucesso! ");
-        }catch(Exception e){
-            System.out.println("Houve um Erro ao Realizar a Venda do Caminhão. "+e.getMessage());
+            System.out.println("Caminhão vendido com sucesso!");
+    
+        } catch (ProprietarioNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (CaminhaoNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro inesperado ao realizar a venda: " + e.getMessage());
         }
     }
+    
 
     public static void removerVenda() {
         System.out.println("Digite o ID da Venda a ser removida: ");
         int id = Integer.parseInt(scanner.nextLine());
     
         try {
+            Venda venda = serviceVenda.buscarVendaPorId(id);
+    
+            if (venda == null) {
+                throw new VendaNaoEncontradaException("Venda com o ID " + id + " não foi encontrada.");
+            }
+    
             serviceVenda.removerVenda(id);
             System.out.println("Venda removida com sucesso!");
+    
+        } catch (VendaNaoEncontradaException e) {
+            System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Erro ao remover venda: " + e.getMessage());
         }
@@ -957,21 +1082,24 @@ public class MainApp {
         System.out.println("Digite o ID da Venda a ser atualizada: ");
         int id = Integer.parseInt(scanner.nextLine());
     
-        Venda vendaExistente = serviceVenda.buscarVendaPorId(id);
-        if (vendaExistente == null) {
-            System.out.println("Venda não encontrada.");
-            return;
-        }
-    
-        System.out.println("Digite o CPF do novo proprietário (ou mantenha o anterior): ");
-        String cpfNovo = scanner.nextLine();
-        Proprietario novoProprietario = serviceProprietario.buscarProprietario(cpfNovo);
-    
-        vendaExistente.setProprietario(novoProprietario);
-    
         try {
+            Venda vendaExistente = serviceVenda.buscarVendaPorId(id);
+    
+            if (vendaExistente == null) {
+                throw new VendaNaoEncontradaException("Venda com o ID " + id + " não foi encontrada.");
+            }
+    
+            System.out.println("Digite o CPF do novo proprietário (ou mantenha o anterior): ");
+            String cpfNovo = scanner.nextLine();
+            Proprietario novoProprietario = serviceProprietario.buscarProprietario(cpfNovo);
+    
+            vendaExistente.setProprietario(novoProprietario);
+    
             serviceVenda.atualizarVenda(id, vendaExistente);
             System.out.println("Venda atualizada com sucesso!");
+    
+        } catch (VendaNaoEncontradaException e) {
+            System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Erro ao atualizar venda: " + e.getMessage());
         }
@@ -981,17 +1109,26 @@ public class MainApp {
         System.out.println("Digite o ID da Venda: ");
         int id = Integer.parseInt(scanner.nextLine());
     
-        Venda venda = serviceVenda.buscarVendaPorId(id);
-        if (venda != null) {
+        try {
+            Venda venda = serviceVenda.buscarVendaPorId(id);
+    
+            if (venda == null) {
+                throw new VendaNaoEncontradaException("Venda com o ID " + id + " não foi encontrada.");
+            }
+    
             System.out.println("Venda ID: " + venda.getId() + " - Proprietário: " + venda.getProprietario().getNome());
             System.out.println("Veículos Vendidos: ");
             for (Veiculo veiculo : venda.getVeiculosVendidos()) {
                 System.out.println(" - " + veiculo.getPlaca() + " (" + veiculo.getClass().getSimpleName() + ")");
             }
-        } else {
-            System.out.println("Venda não encontrada.");
+    
+        } catch (VendaNaoEncontradaException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao buscar venda: " + e.getMessage());
         }
     }
+    
     
     public static void listarVendas() {
         List<Venda> vendas = serviceVenda.listarVendas();

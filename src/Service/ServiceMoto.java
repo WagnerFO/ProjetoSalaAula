@@ -12,7 +12,6 @@ public class ServiceMoto implements serviceMotoInterface {
 
     public ServiceMoto(repositorioMotoInterface motoRepositorio) {
         this.motoRepositorio = motoRepositorio;
-        System.out.println("RepositorioMoto inicializado: " + (this.motoRepositorio != null));
     }
 
     @Override

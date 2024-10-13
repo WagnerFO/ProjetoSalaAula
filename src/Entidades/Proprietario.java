@@ -1,8 +1,6 @@
 package Entidades;
 
 public class Proprietario extends Pessoa {
-    
-    private static int nextId=1;
 
     private int id;
     private String telefoneContato;
@@ -10,18 +8,20 @@ public class Proprietario extends Pessoa {
 
     public Proprietario(){
         super();
-        this.id=nextId++;
     }
 
     public Proprietario(String nome, int idade, String cpf, String telefoneContato, String endereco){
         super(nome, idade, cpf);
-        this.id=nextId++;
         this.telefoneContato=telefoneContato;
         this.endereco=endereco;
     }
 
     public int getId(){
         return id;
+    }
+    
+    public void setId(int id) {
+    	this.id=id;
     }
 
     public String getTelefoneContato() {

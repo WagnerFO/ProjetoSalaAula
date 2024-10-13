@@ -1,8 +1,10 @@
 package Service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import Entidades.Proprietario;
+import IRepositorio.IRepositorioProprietarioSQL;
 import IRepositorio.repositorioProprietarioInterface;
 import IService.serviceProprietarioInterface;
 
@@ -11,6 +13,11 @@ public class ServiceProprietario implements serviceProprietarioInterface{
     private repositorioProprietarioInterface proprietarioRepositorio;
     public ServiceProprietario (repositorioProprietarioInterface proprietarioRepositorio){
         this.proprietarioRepositorio = proprietarioRepositorio;
+    }
+    
+    private IRepositorioProprietarioSQL proprietarioRepositorioSQL;
+    public ServiceProprietario(IRepositorioProprietarioSQL proprietarioRepositorioSQL) {
+    	this.proprietarioRepositorioSQL=proprietarioRepositorioSQL;
     }
     
 	@Override
@@ -26,6 +33,11 @@ public class ServiceProprietario implements serviceProprietarioInterface{
 		if(proprietario.getTelefoneContato() == null || proprietario.getTelefoneContato().trim().isEmpty());
 
 		proprietarioRepositorio.cadastrarProprietario(proprietario);
+	}
+	
+	@Override
+	public void adicionarProprietario(Proprietario proprietario) throws SQLException{
+		proprietarioRepositorioSQL.adicionarProprietario(proprietario);
 	}
 
 	@Override

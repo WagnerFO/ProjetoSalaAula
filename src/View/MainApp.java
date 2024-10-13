@@ -18,12 +18,17 @@ public class MainApp {
     private static repositorioMotoInterface repositorioMoto = new RepositorioMoto();
     private static repositorioCaminhaoInterface repositorioCaminhao = new RepositorioCaminhao();
     private static repositorioVendaInterface repositorioVenda = new RepositorioVenda();
+    
+    
+    private static IRepositorioProprietarioSQL proprietarioRepositorioSQL = new  RepositorioProprietarioSQL();
 
     private static serviceProprietarioInterface serviceProprietario = new ServiceProprietario(repositorioProprietario);
+    private static serviceProprietarioInterface serviceProprietarioSQL = new ServiceProprietario(proprietarioRepositorioSQL);
     private static serviceCarroInterface serviceCarro = new ServiceCarro(repositorioCarro);
     private static serviceMotoInterface serviceMoto = new ServiceMoto(repositorioMoto);
     private static serviceCaminhaoInterface serviceCaminhao = new ServiceCaminhao(repositorioCaminhao);
     private static serviceVendaInterface serviceVenda = new ServiceVenda(repositorioCarro, repositorioMoto, repositorioCaminhao, repositorioProprietario, repositorioVenda);
+   
    
     
     private static Scanner scanner = new Scanner (System.in);
@@ -846,10 +851,15 @@ public class MainApp {
     
         try {
             serviceProprietario.cadastrarProprietario(proprietario);
+            serviceProprietarioSQL.adicionarProprietario(proprietario);
             System.out.println("Proprietário Adicionado com Sucesso!");
+            
+            
         } catch (Exception e) {
             System.out.println("Erro ao Adicionar Proprietário! " + e.getMessage());
         }
+                
+        	
     }
     
     public static void removerProprietario() {

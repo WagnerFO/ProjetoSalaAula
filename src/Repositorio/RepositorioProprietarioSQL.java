@@ -9,19 +9,6 @@ import IRepositorio.IRepositorioProprietarioSQL;
 import Util.Conexao;
 
 public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
-
-	/*
-	private Connection conn ;
-	public RepositorioProprietarioSQL() {
-		try {
-			this.conn = this.conn = ConnectionSingleton.getInstance().conexao;
-		}
-		catch(Exception e) {
-			//TODO: handle exception
-			System.out.println(e);
-		}
-	}
-	*/
 	
 	@Override
 	public void adicionarProprietario(Proprietario proprietario) throws SQLException {

@@ -3,7 +3,7 @@ package Service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Entidades.Proprietario;
+import Entity.Proprietario;
 import IRepositorio.IRepositorioProprietarioSQL;
 import IRepositorio.repositorioProprietarioInterface;
 import IService.serviceProprietarioInterface;
@@ -75,17 +75,18 @@ public class ServiceProprietario implements serviceProprietarioInterface{
 	}
 
 	@Override
-	public void alterarProp(Proprietario proprietario) throws SQLException{
-		if(proprietario.getNome() == null || proprietario.getNome().trim().isEmpty()){
-            throw new SQLException("Nome do Proprietario é OBRIGATÓRIO!");
-        }
-        if(proprietario.getCpf() == null || proprietario.getCpf().trim().isEmpty()){
-            throw new SQLException("CPF do Proprietário é OBRIGATÓRIO!");
-        }
-        if(proprietario.getIdade() < 18 ) {
-        	throw new SQLException("Idade do Proprietário deve ser maior que 18 anos.");
-        }
-		proprietarioRepositorioSQL.alterarProprietario(proprietario);
+	public void alterarProp(Proprietario proprietario, String cpfOriginal) throws SQLException {
+		if (proprietario.getNome() == null || proprietario.getNome().trim().isEmpty()) {
+			throw new SQLException("Nome do Proprietário é OBRIGATÓRIO!");
+		}
+		if (proprietario.getCpf() == null || proprietario.getCpf().trim().isEmpty()) {
+			throw new SQLException("CPF do Proprietário é OBRIGATÓRIO!");
+		}
+		if (proprietario.getIdade() < 18) {
+			throw new SQLException("Idade do Proprietário deve ser maior que 18 anos.");
+		}
+
+		proprietarioRepositorioSQL.alterarProprietario(proprietario, cpfOriginal);
 	}
 
 	@Override

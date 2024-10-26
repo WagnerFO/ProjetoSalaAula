@@ -2,7 +2,8 @@ package Repositorio;
 
 import java.sql.*;
 import java.util.ArrayList;
-import Entidades.Proprietario;
+
+import Entity.Proprietario;
 import IRepositorio.IRepositorioProprietarioSQL;
 import Util.ConnectionFactory;
 import Util.ConnectionSingleton;
@@ -33,21 +34,28 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 		}
 	}
 
-	@Override
-	public void alterarProprietario(Proprietario proprietario) throws SQLException {
-		String sql = "UPDATE proprietarios SET nome = ?, idade = ?, telefoneContato = ?, endereco = ? WHERE cpf = ?";
-		try(PreparedStatement stmt = connection.prepareStatement(sql)){
-			stmt.setString(1, proprietario.getNome());
-			stmt.setInt(2, proprietario.getIdade());
-			stmt.setString(3, proprietario.getTelefoneContato());
-			stmt.setString(4, proprietario.getEndereco());
-			stmt.setString(5, proprietario.getCpf());
+
+
+	public void alterarProprietario(Proprietario proprietario, String cpfOriginal) throws SQLException {
+		String sql = "UPDATE proprietarios SET cpf = ?, nome = ?, idade = ?, telefoneContato = ?, endereco = ? WHERE cpf = ?";
+		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+			// Define os valores que serão atualizados
+			stmt.setString(1, proprietario.getCpf()); // Novo CPF
+			stmt.setString(2, proprietario.getNome());
+			stmt.setInt(3, proprietario.getIdade());
+			stmt.setString(4, proprietario.getTelefoneContato());
+			stmt.setString(5, proprietario.getEndereco());
+			
+			// Define o CPF original no WHERE para encontrar o proprietário correto
+			stmt.setString(6, cpfOriginal);
+
 			stmt.executeUpdate();
-		}
-		catch(SQLException e){
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
+	
 
 	@Override
 	public Proprietario listarProp(int id) throws SQLException{
@@ -70,18 +78,9 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 
 	@Override
 	public Proprietario pesquisarProprietarios(String cpf) {
-		cpf = cpf.trim(); // Normaliza o CPF, removendo espaços em branco
-		System.out.println("Buscando proprietário com CPF: " + cpf); // Log de depuração
-	
 		String sql = "SELECT * FROM proprietarios WHERE cpf = ?";
 		Proprietario proprietario = null;
-	
-		// Verifica se a conexão é válida
-		if (connection == null) {
-			System.out.println("Conexão com o banco de dados não está disponível.");
-			return null;
-		}
-	
+			
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setString(1, cpf);
 			ResultSet rs = stmt.executeQuery();
@@ -93,10 +92,7 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 				proprietario.setCpf(rs.getString("cpf"));
 				proprietario.setTelefoneContato(rs.getString("telefoneContato"));
 				proprietario.setEndereco(rs.getString("endereco"));
-				System.out.println("Proprietário encontrado: " + proprietario.getNome()); // Log de depuração
-			} else {
-				System.out.println("Nenhum proprietário encontrado com o CPF: " + cpf); // Log de depuração
-			}
+			} 
 		} catch (SQLException e) {
 			System.out.println("Erro ao pesquisar proprietário: " + e.getMessage());
 			e.printStackTrace();

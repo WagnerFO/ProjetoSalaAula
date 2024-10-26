@@ -2,9 +2,9 @@ package IService;
 
 import java.util.List;
 
-import Entidades.Proprietario;
-import Entidades.Veiculo;
-import Entidades.Venda;
+import Entity.Proprietario;
+import Entity.Veiculo;
+import Entity.Venda;
 
 public interface serviceVendaInterface {
     

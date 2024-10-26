@@ -2,7 +2,7 @@ package Service;
 
 import java.util.ArrayList;
 
-import Entidades.Caminhao;
+import Entity.Caminhao;
 import IRepositorio.repositorioCaminhaoInterface;
 import IService.serviceCaminhaoInterface;
 

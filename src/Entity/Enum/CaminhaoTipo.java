@@ -1,4 +1,4 @@
-package Entidades.Enum;
+package Entity.Enum;
 
 public enum CaminhaoTipo {
 	truck,

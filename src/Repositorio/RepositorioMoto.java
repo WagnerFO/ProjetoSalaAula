@@ -2,7 +2,7 @@ package Repositorio;
 
 import java.util.ArrayList;
 
-import Entidades.Moto;
+import Entity.Moto;
 import IRepositorio.repositorioMotoInterface;
 
 public class RepositorioMoto implements repositorioMotoInterface {

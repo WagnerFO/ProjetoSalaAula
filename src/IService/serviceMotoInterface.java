@@ -1,7 +1,8 @@
 package IService;
 
 import java.util.ArrayList;
-import Entidades.Moto;
+
+import Entity.Moto;
 
 public interface serviceMotoInterface {
 

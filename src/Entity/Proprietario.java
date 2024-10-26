@@ -1,4 +1,4 @@
-package Entidades;
+package Entity;
 
 public class Proprietario extends Pessoa {
 
@@ -7,7 +7,7 @@ public class Proprietario extends Pessoa {
     private String endereco;
 
     public Proprietario(){
-        super();
+        
     }
 
     public Proprietario(String nome, int idade, String cpf, String telefoneContato, String endereco){

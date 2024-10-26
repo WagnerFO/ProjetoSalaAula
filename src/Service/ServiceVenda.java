@@ -1,15 +1,16 @@
 package Service;
 
-import Entidades.Venda;
 import IRepositorio.*;
 import IService.serviceVendaInterface;
-import Entidades.Caminhao;
-import Entidades.Carro;
-import Entidades.Moto;
-import Entidades.Proprietario;
-import Entidades.Veiculo;
 
 import java.util.List;
+
+import Entity.Caminhao;
+import Entity.Carro;
+import Entity.Moto;
+import Entity.Proprietario;
+import Entity.Veiculo;
+import Entity.Venda;
 
 public class ServiceVenda implements serviceVendaInterface{
 

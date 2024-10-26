@@ -1,6 +1,6 @@
-package Entidades;
+package Entity;
 
-import Entidades.Enum.CarroTipo;
+import Entity.Enum.CarroTipo;
 
 public class Carro extends Veiculo {
 

@@ -1,7 +1,8 @@
 package IRepositorio;
 
 import java.util.ArrayList;
-import Entidades.Carro;
+
+import Entity.Carro;
 
 public interface repositorioCarroInterface {
     public void cadastrarCarro(Carro carro) throws Exception;

@@ -2,7 +2,7 @@ package Repositorio;
 
 import java.util.ArrayList;
 
-import Entidades.Caminhao;
+import Entity.Caminhao;
 import IRepositorio.repositorioCaminhaoInterface;
 
 public class RepositorioCaminhao implements repositorioCaminhaoInterface {

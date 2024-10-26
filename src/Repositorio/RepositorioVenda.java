@@ -2,7 +2,7 @@ package Repositorio;
 
 import java.util.ArrayList;
 
-import Entidades.Venda;
+import Entity.Venda;
 import IRepositorio.repositorioVendaInterface;
 
 public class RepositorioVenda implements repositorioVendaInterface {

@@ -1,7 +1,8 @@
 package IRepositorio;
 
 import java.util.ArrayList;
-import Entidades.Moto;
+
+import Entity.Moto;
 
 public interface repositorioMotoInterface {
     public void cadastrarMoto(Moto moto) throws Exception;

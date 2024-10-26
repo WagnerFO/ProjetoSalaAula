@@ -2,7 +2,7 @@ package IService;
 
 import java.util.ArrayList;
 
-import Entidades.Carro;
+import Entity.Carro;
 
 public interface serviceCarroInterface {
 

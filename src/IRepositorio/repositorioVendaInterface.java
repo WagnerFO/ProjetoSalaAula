@@ -1,7 +1,8 @@
 package IRepositorio;
 
 import java.util.List;
-import Entidades.Venda;
+
+import Entity.Venda;
 
 public interface repositorioVendaInterface {
 

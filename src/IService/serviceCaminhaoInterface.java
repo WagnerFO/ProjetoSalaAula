@@ -1,7 +1,8 @@
 package IService;
 
 import java.util.ArrayList;
-import Entidades.Caminhao;
+
+import Entity.Caminhao;
 
 public interface serviceCaminhaoInterface {
 

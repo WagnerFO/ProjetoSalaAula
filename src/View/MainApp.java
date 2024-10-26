@@ -1,13 +1,12 @@
 package View;
 
-import java.lang.reflect.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import Entidades.*;
-import Entidades.Enum.*;
+import Entity.*;
+import Entity.Enum.*;
 import Exceptions.*;
 import IRepositorio.*;
 import IService.*;
@@ -887,7 +886,7 @@ public class MainApp {
             System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
         }
     }
-    
+
     public static void atualizarProprietario() {
         System.out.println("Digite o CPF do Proprietário que você deseja Atualizar:");
         String cpf = scanner.nextLine();
@@ -902,7 +901,7 @@ public class MainApp {
             if(proprietarioMudarSQL == null){
                 throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
             }
-
+    
             System.out.println("Digite o novo CPF: ");
             String newCpf = scanner.nextLine();
             System.out.println("Digite o Novo Nome: ");
@@ -914,8 +913,7 @@ public class MainApp {
             System.out.println("Digite o Novo Endereço: ");
             String endereco = scanner.nextLine();
     
-            //proprietarioMudar.setCpf(newCpf);
-            proprietarioMudarSQL.setCpf(newCpf);
+            
             //proprietarioMudar.setNome(nome);
             proprietarioMudarSQL.setNome(nome);
             //proprietarioMudar.setIdade(idade);
@@ -924,10 +922,12 @@ public class MainApp {
             proprietarioMudarSQL.setTelefoneContato(telefoneContato);
             //proprietarioMudar.setEndereco(endereco);
             proprietarioMudarSQL.setEndereco(endereco);
+            //proprietarioMudar.setCpf(newCpf);
+            proprietarioMudarSQL.setCpf(newCpf);
     
             //serviceProprietario.atualizarProprietario(proprietarioMudar);
-            serviceProprietarioSQL.alterarProp(proprietarioMudarSQL);
-
+            serviceProprietarioSQL.alterarProp(proprietarioMudarSQL, cpf);
+    
             System.out.println("Proprietário Atualizado com Sucesso!");
     
         } catch (ProprietarioNaoEncontradoException e) {
@@ -963,14 +963,14 @@ public class MainApp {
     }
     
     public static void listarProprietarios() throws SQLException {
-        ArrayList<Proprietario> proprietarios = serviceProprietario.verProprietario();
+        /*ArrayList<Proprietario> proprietarios = serviceProprietario.verProprietario();
         if(proprietarios.isEmpty()){
             System.out.println("Não há Proprietários Cadastrados.");
         } else {
             for(Proprietario p : proprietarios){
                 System.out.println(p);
             }
-        }
+        }*/
         ArrayList<Proprietario> proprietariosSql = serviceProprietarioSQL.listarTodos();
         if(proprietariosSql.isEmpty()){
             System.out.println("Não há Proprietários Cadastrados.");

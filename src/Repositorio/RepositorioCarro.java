@@ -2,7 +2,7 @@ package Repositorio;
 
 import java.util.ArrayList;
 
-import Entidades.Carro;
+import Entity.Carro;
 import IRepositorio.repositorioCarroInterface;
 
 public class RepositorioCarro implements repositorioCarroInterface{

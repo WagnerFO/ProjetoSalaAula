@@ -2,7 +2,7 @@ package IRepositorio;
 
 import java.util.ArrayList;
 
-import Entidades.Proprietario;
+import Entity.Proprietario;
 
 public interface repositorioProprietarioInterface {
 

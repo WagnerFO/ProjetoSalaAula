@@ -2,7 +2,7 @@ package Service;
 
 import java.util.ArrayList;
 
-import Entidades.Moto;
+import Entity.Moto;
 import IRepositorio.repositorioMotoInterface;
 import IService.serviceMotoInterface;
 

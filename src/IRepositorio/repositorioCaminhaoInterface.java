@@ -1,7 +1,8 @@
 package IRepositorio;
 
 import java.util.ArrayList;
-import Entidades.Caminhao;
+
+import Entity.Caminhao;
 
 public interface repositorioCaminhaoInterface {
     public void cadastrarCaminhao(Caminhao caminhao) throws Exception;

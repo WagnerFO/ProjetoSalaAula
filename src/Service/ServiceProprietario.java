@@ -37,12 +37,27 @@ public class ServiceProprietario implements serviceProprietarioInterface{
 	
 	@Override
 	public void adicionarProprietario(Proprietario proprietario) throws SQLException{
+		if(proprietario.getNome()==null || proprietario.getNome().trim().isEmpty())
+			throw new SQLException("nome do Proprietario é Obrigatório!");
+		if(proprietario.getCpf() == null || proprietario.getCpf().trim().isEmpty())
+            throw new SQLException("CPF do Proprietário é OBRIGATÓRIO!");
+        if(proprietario.getIdade() < 18 ) 
+        	throw new SQLException("Idade do Proprietário deve ser maior que 18 anos.");
+		if(proprietario.getEndereco() == null || proprietario.getEndereco().trim().isEmpty())
+			throw new SQLException("Endereco do Proprietário é obrigatório! ");
+		if(proprietario.getTelefoneContato() == null || proprietario.getTelefoneContato().trim().isEmpty());
+			
 		proprietarioRepositorioSQL.adicionarProprietario(proprietario);
 	}
 
 	@Override
 	public void removerProprietario(Proprietario proprietario){
-		proprietarioRepositorio.removerProprietario(proprietario);	
+		proprietarioRepositorio.removerProprietario(proprietario);
+	}
+
+	@Override
+	public void excluirProp(Proprietario proprietario){
+		proprietarioRepositorioSQL.excluirProp(proprietario);
 	}
 
 	@Override
@@ -60,13 +75,41 @@ public class ServiceProprietario implements serviceProprietarioInterface{
 	}
 
 	@Override
-	public Proprietario buscarProprietario(String cpf) {
-		return proprietarioRepositorio.buscarProprietarioPorCpf(cpf);
+	public void alterarProp(Proprietario proprietario) throws SQLException{
+		if(proprietario.getNome() == null || proprietario.getNome().trim().isEmpty()){
+            throw new SQLException("Nome do Proprietario é OBRIGATÓRIO!");
+        }
+        if(proprietario.getCpf() == null || proprietario.getCpf().trim().isEmpty()){
+            throw new SQLException("CPF do Proprietário é OBRIGATÓRIO!");
+        }
+        if(proprietario.getIdade() < 18 ) {
+        	throw new SQLException("Idade do Proprietário deve ser maior que 18 anos.");
+        }
+		proprietarioRepositorioSQL.alterarProprietario(proprietario);
 	}
 
 	@Override
 	public ArrayList<Proprietario> verProprietario() {
 		return proprietarioRepositorio.verProprietarios();
 	}
+
+	@Override
+	public ArrayList<Proprietario> listarTodos() throws SQLException{
+		return proprietarioRepositorioSQL.listarTodos();
+	}
+
+	@Override
+	public Proprietario buscarProprietario(String cpf) {
+		return proprietarioRepositorio.buscarProprietarioPorCpf(cpf);
+	}
+
+	@Override
+	public Proprietario listarProp(int id)throws SQLException{
+		return proprietarioRepositorioSQL.listarProp(id);
+	}
 	
+	@Override
+	public Proprietario pesquisarPorprietario(String cpf){
+		return proprietarioRepositorioSQL.pesquisarProprietarios(cpf);
+	}
 }

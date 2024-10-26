@@ -1,5 +1,7 @@
 package View;
 
+import java.lang.reflect.Array;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -18,7 +20,6 @@ public class MainApp {
     private static repositorioMotoInterface repositorioMoto = new RepositorioMoto();
     private static repositorioCaminhaoInterface repositorioCaminhao = new RepositorioCaminhao();
     private static repositorioVendaInterface repositorioVenda = new RepositorioVenda();
-    
     
     private static IRepositorioProprietarioSQL proprietarioRepositorioSQL = new  RepositorioProprietarioSQL();
 
@@ -867,13 +868,18 @@ public class MainApp {
         String cpfDel = scanner.nextLine();
     
         try {
-            Proprietario delProprietario = serviceProprietario.buscarProprietario(cpfDel);
+            //Proprietario delProprietario = serviceProprietario.buscarProprietario(cpfDel);
+            Proprietario delProprietarioSql = serviceProprietarioSQL.pesquisarPorprietario(cpfDel);
     
-            if (delProprietario == null) {
+            //if (delProprietario == null) {
+            //    throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpfDel + " não foi encontrado.");
+            //}
+            if(delProprietarioSql ==null ){
                 throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpfDel + " não foi encontrado.");
             }
     
-            serviceProprietario.removerProprietario(delProprietario);
+            //serviceProprietario.removerProprietario(delProprietario);
+            serviceProprietarioSQL.excluirProp(delProprietarioSql);
             System.out.println("Proprietário Removido com Sucesso.");
         } catch (ProprietarioNaoEncontradoException e) {
             System.out.println("Erro: " + e.getMessage());
@@ -887,12 +893,16 @@ public class MainApp {
         String cpf = scanner.nextLine();
     
         try {
-            Proprietario proprietarioMudar = serviceProprietario.buscarProprietario(cpf);
+            //Proprietario proprietarioMudar = serviceProprietario.buscarProprietario(cpf);
+            Proprietario proprietarioMudarSQL = serviceProprietarioSQL.pesquisarPorprietario(cpf);
     
-            if (proprietarioMudar == null) {
+            //if (proprietarioMudar == null) {
+            //    throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
+            //}
+            if(proprietarioMudarSQL == null){
                 throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
             }
-    
+
             System.out.println("Digite o novo CPF: ");
             String newCpf = scanner.nextLine();
             System.out.println("Digite o Novo Nome: ");
@@ -904,13 +914,20 @@ public class MainApp {
             System.out.println("Digite o Novo Endereço: ");
             String endereco = scanner.nextLine();
     
-            proprietarioMudar.setCpf(newCpf);
-            proprietarioMudar.setNome(nome);
-            proprietarioMudar.setIdade(idade);
-            proprietarioMudar.setTelefoneContato(telefoneContato);
-            proprietarioMudar.setEndereco(endereco);
+            //proprietarioMudar.setCpf(newCpf);
+            proprietarioMudarSQL.setCpf(newCpf);
+            //proprietarioMudar.setNome(nome);
+            proprietarioMudarSQL.setNome(nome);
+            //proprietarioMudar.setIdade(idade);
+            proprietarioMudarSQL.setIdade(idade);
+            //proprietarioMudar.setTelefoneContato(telefoneContato);
+            proprietarioMudarSQL.setTelefoneContato(telefoneContato);
+            //proprietarioMudar.setEndereco(endereco);
+            proprietarioMudarSQL.setEndereco(endereco);
     
-            serviceProprietario.atualizarProprietario(proprietarioMudar);
+            //serviceProprietario.atualizarProprietario(proprietarioMudar);
+            serviceProprietarioSQL.alterarProp(proprietarioMudarSQL);
+
             System.out.println("Proprietário Atualizado com Sucesso!");
     
         } catch (ProprietarioNaoEncontradoException e) {
@@ -925,13 +942,19 @@ public class MainApp {
         String cpf = scanner.nextLine();
     
         try {
-            Proprietario proprietarioBuscar = serviceProprietario.buscarProprietario(cpf);
+            //Proprietario proprietarioBuscar = serviceProprietario.buscarProprietario(cpf);
+            Proprietario proprietarioBuscarSql = serviceProprietarioSQL.pesquisarPorprietario(cpf);
     
-            if (proprietarioBuscar == null) {
+            //if (proprietarioBuscar == null) {
+            //    throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
+            //}
+            if(proprietarioBuscarSql == null){
                 throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
             }
     
-            System.out.println("Proprietário Encontrado: " + proprietarioBuscar.getNome());
+            //System.out.println("Proprietário Encontrado: " + proprietarioBuscar.getNome());
+            System.out.println("Proprietário Encontrado: " + proprietarioBuscarSql.getNome());
+
         } catch (ProprietarioNaoEncontradoException e) {
             System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
@@ -939,12 +962,20 @@ public class MainApp {
         }
     }
     
-    public static void listarProprietarios() {
+    public static void listarProprietarios() throws SQLException {
         ArrayList<Proprietario> proprietarios = serviceProprietario.verProprietario();
         if(proprietarios.isEmpty()){
             System.out.println("Não há Proprietários Cadastrados.");
         } else {
             for(Proprietario p : proprietarios){
+                System.out.println(p);
+            }
+        }
+        ArrayList<Proprietario> proprietariosSql = serviceProprietarioSQL.listarTodos();
+        if(proprietariosSql.isEmpty()){
+            System.out.println("Não há Proprietários Cadastrados.");
+        }else{
+            for(Proprietario p : proprietariosSql){
                 System.out.println(p);
             }
         }

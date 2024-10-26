@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "MainApp",
+            "request": "launch",
+            "mainClass": "View.MainApp",
+            "projectName": "Aplicação de Cadastro de Veículos"
+        },
+        {
             "name": "Depurador do Python: Arquivo Atual",
             "type": "debugpy",
             "request": "launch",

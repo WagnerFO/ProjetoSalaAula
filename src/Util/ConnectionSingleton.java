@@ -11,7 +11,7 @@ public final class ConnectionSingleton {
 
 	private ConnectionSingleton() throws SQLException, InterruptedException {
 
-		final String url ="jdbc:mysql://127.0.0.1:3306/projetosalaaula";
+		final String url ="jdbc:mysql://127.0.0.1:3306/projetosalaaula?useTimezone=true&serverTimezone=UTC";
 	    final String user= "root";
 	    final String password = "4019";
 

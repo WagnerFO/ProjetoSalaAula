@@ -1,9 +1,9 @@
 package Entity.Enum;
 
 public enum CarroTipo {
-	hatch,
-	sedan,
-	suv,
-	sport,
+	HATCH,
+	SEDAN,
+	SUV,
+	SPORT,
 	
 }

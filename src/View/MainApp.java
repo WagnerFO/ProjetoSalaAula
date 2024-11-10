@@ -37,10 +37,10 @@ public class MainApp {
 
         Proprietario proprietario = new Proprietario("Maria Silva", 28, "987", "11987654321", "Rua B, 45");
 
-        Caminhao caminhão = new Caminhao("Mercedes", "Actros", "Branco", 2022, "ABC1234", 250000.0, 15, CaminhaoTipo.truck); 
+        Caminhao caminhão = new Caminhao("Mercedes", "Actros", "Branco", 2022, "ABC1234", 250000.0, 15, CaminhaoTipo.TRUCK); 
         
-        Carro carro = new Carro("Fiat", "Palio", "Preto", 2020, "XYZ1234", 50000.0, 4, CarroTipo.sedan);
-        Moto moto = new Moto("Honda", "CBR", "Vermelha", 2021, "ABC5678", 30000.0, 600, MotoTipo.urbana);
+        Carro carro = new Carro("Fiat", "Palio", "Preto", 2020, "XYZ1234", 50000.0, 4, CarroTipo.SEDAN);
+        Moto moto = new Moto("Honda", "CBR", "Vermelha", 2021, "ABC5678", 30000.0, 600, MotoTipo.URBANA);
        
         serviceProprietario.cadastrarProprietario(proprietario);
         serviceCarro.cadastrarCarro(carro);

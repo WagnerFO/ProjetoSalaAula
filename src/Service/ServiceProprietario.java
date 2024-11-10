@@ -86,7 +86,7 @@ public class ServiceProprietario implements serviceProprietarioInterface{
 			throw new SQLException("Idade do Proprietário deve ser maior que 18 anos.");
 		}
 
-		proprietarioRepositorioSQL.alterarProprietario(proprietario, cpfOriginal);
+		proprietarioRepositorioSQL.alterarProprietario(proprietario);
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public class ServiceProprietario implements serviceProprietarioInterface{
 
 	@Override
 	public Proprietario listarProp(int id)throws SQLException{
-		return proprietarioRepositorioSQL.listarProp(id);
+		return proprietarioRepositorioSQL.listarProprietarioPorId(id);
 	}
 	
 	@Override

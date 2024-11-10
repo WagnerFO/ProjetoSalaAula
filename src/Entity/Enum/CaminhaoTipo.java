@@ -1,7 +1,7 @@
 package Entity.Enum;
 
 public enum CaminhaoTipo {
-	truck,
-	bitruck,
-	carreta,
+	TRUCK,
+	BITRUCK,
+	CARRETA,
 }

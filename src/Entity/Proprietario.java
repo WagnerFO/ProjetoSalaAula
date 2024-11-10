@@ -1,10 +1,13 @@
 package Entity;
 
+import java.util.ArrayList;
+
 public class Proprietario extends Pessoa {
 
     private int id;
     private String telefoneContato;
     private String endereco;
+    private ArrayList<Veiculo> veiculos;	
 
     public Proprietario(){
         
@@ -14,8 +17,10 @@ public class Proprietario extends Pessoa {
         super(nome, idade, cpf);
         this.telefoneContato=telefoneContato;
         this.endereco=endereco;
-    }
-
+        this.veiculos = new ArrayList<>();
+        }
+    
+    
     public int getId(){
         return id;
     }
@@ -39,6 +44,19 @@ public class Proprietario extends Pessoa {
     public void setEndereco(String endereco) {
         this.endereco = endereco;
     }
+    
+    public ArrayList<Veiculo> getVeiculos(){
+    	return veiculos;
+    }
+    
+    public void setVeiculos(ArrayList<Veiculo> veiculos) {
+    	this.veiculos = veiculos;
+    }
+    
+    public void adicionarVeiculo(Veiculo veiculo) {
+    	this.veiculos.add(veiculo);
+    }
+    
     
     @Override
     public String toString() {

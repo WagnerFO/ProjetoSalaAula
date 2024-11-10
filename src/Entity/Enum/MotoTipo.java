@@ -1,7 +1,7 @@
 package Entity.Enum;
 
 public enum MotoTipo {
-	trilha,
-	urbana,
-	sport,
+	TRILHA,
+	URBANA,
+	SPORT,
 }

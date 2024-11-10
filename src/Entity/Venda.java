@@ -5,20 +5,21 @@ import java.util.List;
 
 public class Venda {
 
-    private static int nextId=1;
-
     private int id;
     private Proprietario proprietario;
     private List<Veiculo> veiculosVendidosPorCliente;
     
     public Venda(Proprietario proprietario){
-        this.id=nextId++;
         this.proprietario=proprietario;
         this.veiculosVendidosPorCliente= new ArrayList<>();
     }
     
     public int getId() {
         return id;
+    }
+    
+    public void setId(int id) {
+    	this.id=id;
     }
 
     public Proprietario getProprietario() {

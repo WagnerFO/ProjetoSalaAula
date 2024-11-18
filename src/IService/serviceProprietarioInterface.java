@@ -16,6 +16,6 @@ public interface serviceProprietarioInterface {
     ArrayList<Proprietario> verProprietario();
     ArrayList<Proprietario> listarTodos() throws SQLException;
     public Proprietario buscarProprietario(String cpf);
-    public Proprietario listarProp(int codigo)throws SQLException;
+    ArrayList<Proprietario> listarProp(int codigo)throws SQLException;
     Proprietario pesquisarPorprietario(String cpf);
 }

@@ -105,8 +105,8 @@ public class ServiceProprietario implements serviceProprietarioInterface{
 	}
 
 	@Override
-	public Proprietario listarProp(int id)throws SQLException{
-		return proprietarioRepositorioSQL.listarProprietarioPorId(id);
+	public ArrayList<Proprietario> listarProp(int id)throws SQLException{
+		return proprietarioRepositorioSQL.listarTodosProprietario();
 	}
 	
 	@Override

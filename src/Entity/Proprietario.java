@@ -20,6 +20,14 @@ public class Proprietario extends Pessoa {
         this.veiculos = new ArrayList<>();
         }
     
+    public Proprietario(int id, String nome, int idade, String cpf, String telefoneContato, String endereco){
+        super(nome, idade, cpf);
+        this.id=id;
+        this.telefoneContato=telefoneContato;
+        this.endereco=endereco;
+        this.veiculos = new ArrayList<>();
+        }
+    
     
     public int getId(){
         return id;

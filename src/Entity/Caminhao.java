@@ -3,21 +3,24 @@ package Entity;
 import Entity.Enum.CaminhaoTipo;
 
 public class Caminhao extends Veiculo {
-
-    private static int nextId = 1;
-
+	
 	private int id;
     private double toneladasCarga;
     private CaminhaoTipo tipo;
 
     public Caminhao() {
-        super();
-        this.id=nextId++;
+    
     }
 
     public Caminhao(String marca, String modelo, String cor, int ano, String placa, double valorVenda, double toneladasCarga, CaminhaoTipo tipo) {
         super(marca, modelo, cor, ano, placa, valorVenda);
-        this.id=nextId++;
+        this.toneladasCarga = toneladasCarga;
+        this.tipo = tipo;
+    }
+    
+    public Caminhao(int id, String marca, String modelo, String cor, int ano, String placa, double valorVenda, double toneladasCarga, CaminhaoTipo tipo) {
+        super(marca, modelo, cor, ano, placa, valorVenda);
+        this.id=id;
         this.toneladasCarga = toneladasCarga;
         this.tipo = tipo;
     }

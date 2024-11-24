@@ -20,7 +20,8 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 			System.out.println(e);
 		}
 	}
-
+	
+	@Override
 	public void cadastrarProp(Proprietario proprietario) throws SQLException {
 	    String sql = "INSERT INTO proprietarios (nome, idade, cpf, telefoneContato, endereco) VALUES (?, ?, ?, ?, ?)";
 	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -52,7 +53,7 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 	    }
 	}
 
-	private void salvarVeiculo(String cpfProprietario, Veiculo veiculo, String tipoVeiculo) throws SQLException {
+	public void salvarVeiculo(String cpfProprietario, Veiculo veiculo, String tipoVeiculo) throws SQLException {
 	    String sql = "INSERT INTO venda_veiculo (proprietario_cpf, veiculo_placa, veiculo_tipo) VALUES (?, ?, ?)";
 	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 	        stmt.setString(1, cpfProprietario);
@@ -63,7 +64,7 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 	}
 
 	// Método para identificar o tipo de veículo
-	private String identificarTipoVeiculo(Veiculo veiculo) {
+	public String identificarTipoVeiculo(Veiculo veiculo) {
 	    if (veiculo instanceof Carro) {
 	        return "CARRO";
 	    } else if (veiculo instanceof Moto) {
@@ -73,41 +74,40 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 	    }
 	    throw new IllegalArgumentException("Tipo de veículo desconhecido.");
 	}
-
+	
 	public void alterarProprietario(Proprietario proprietario) throws SQLException {
-		String sql = "UPDATE proprietarios SET nome = ?, idade = ?, telefoneContato = ?, endereco = ? WHERE cpf = ?";
-		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-			stmt.setString(1, proprietario.getNome());
-			stmt.setInt(2, proprietario.getIdade());
-			stmt.setString(3, proprietario.getTelefoneContato());
-			stmt.setString(4, proprietario.getEndereco());
-			stmt.executeUpdate();
-			
-			removerVeiculos(proprietario.getCpf());
-			
-			 // Para cada veículo do proprietário, verificar a placa e salvar na tabela de vendas
+	    String sql = "UPDATE proprietarios SET nome = ?, idade = ?, telefoneContato = ?, endereco = ? WHERE cpf = ?";
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setString(1, proprietario.getNome());
+	        stmt.setInt(2, proprietario.getIdade());
+	        stmt.setString(3, proprietario.getTelefoneContato());
+	        stmt.setString(4, proprietario.getEndereco());
+	        stmt.setString(5, proprietario.getCpf()); // Use 'cpf' corretamente aqui
+
+	        stmt.executeUpdate();
+
+	        // Lógica adicional para gerenciar veículos do proprietário
+	        removerVeiculos(proprietario.getCpf());
+
 	        for (Veiculo veiculo : proprietario.getVeiculos()) {
 	            String placa = veiculo.getPlaca();
-	            
-	            // Validação: verificar se a placa não excede 7 caracteres
+
 	            if (placa.length() > 7) {
 	                System.out.println("Erro: a placa " + placa + " excede o limite de 7 caracteres.");
-	                // Você pode lançar uma exceção ou tomar outra ação, dependendo da sua lógica de erro
 	                throw new IllegalArgumentException("Placa " + placa + " é inválida, deve ter no máximo 7 caracteres.");
 	            } else {
-	                // Se a placa for válida, identificar o tipo do veículo e salvar
 	                String tipoVeiculo = identificarTipoVeiculo(veiculo);
 	                salvarVeiculo(proprietario.getCpf(), veiculo, tipoVeiculo);
 	            }
 	        }
 	    } catch (SQLException e) {
-	        System.out.println("Erro ao cadastrar proprietário: " + e.getMessage());
-	        throw e; // Re-lança a exceção para que ela seja tratada em outro lugar, se necessário
+	        System.out.println("Erro ao alterar proprietário: " + e.getMessage());
+	        throw e; // Re-lança a exceção
 	    }
 	}
-	
-	
-	private void removerVeiculos(String cpfProprietario) throws SQLException{
+
+	@Override
+	public void removerVeiculos(String cpfProprietario) throws SQLException{
 		String sql = "DELETE FROM venda_veiculo WHERE cpfProprietario = ?";
 		try(PreparedStatement stmt = connection.prepareStatement(sql)){
 			stmt.setString(1, cpfProprietario);
@@ -124,11 +124,12 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				Proprietario proprietario = new Proprietario(
-					rs.getString("nome"),
-					rs.getInt("idade"),
-					rs.getString("cpf"),
-					rs.getString("telefoneContato"),
-					rs.getString("endereco"));
+						rs.getInt("id"),
+						rs.getString("nome"),
+						rs.getInt("idade"),
+						rs.getString("cpf"),
+						rs.getString("telefoneContato"),
+						rs.getString("endereco"));
 				proprietario.setVeiculos(listarVeiculos(rs.getString("cpf")));
 				proprietarios.add(proprietario);
 			}
@@ -235,6 +236,7 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 			
 			if (rs.next()) {
 				proprietario = new Proprietario();
+				proprietario.setId(rs.getInt("id"));
 				proprietario.setNome(rs.getString("nome"));
 				proprietario.setIdade(rs.getInt("idade"));
 				proprietario.setCpf(rs.getString("cpf"));
@@ -255,12 +257,13 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 			ResultSet rs = stmt.executeQuery()){
 			while (rs.next()) {
 				Proprietario proprietario = new Proprietario(
-					rs.getString("nome"),
-					rs.getInt("idade"),
-					rs.getString("cpf"),
-					rs.getString("telefoneContato"),
-					rs.getString("endereco"));
-					proprietarios.add(proprietario);
+						rs.getInt("id"),
+						rs.getString("nome"),
+						rs.getInt("idade"),
+						rs.getString("cpf"),
+						rs.getString("telefoneContato"),
+						rs.getString("endereco"));
+				proprietarios.add(proprietario);
 				}
 			}
 		return proprietarios;
@@ -300,6 +303,5 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 		}
 		
 	}
-	
 	
 }

@@ -18,6 +18,13 @@ public class Carro extends Veiculo {
         this.tipo=tipo;
 	}
     
+    public Carro(int id, String marca, String modelo, String cor, int ano,String placa, double valorVenda, int quantPortas, CarroTipo tipo) {
+        super(marca, modelo, cor, ano,placa, valorVenda);
+        this.id=id;
+        this.quantPortas=quantPortas;
+        this.tipo=tipo;
+	}
+    
     public int getId() {
         return id;
     }

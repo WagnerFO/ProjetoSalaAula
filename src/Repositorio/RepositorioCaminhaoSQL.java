@@ -40,7 +40,7 @@ public class RepositorioCaminhaoSQL implements IRepositorioCaminhaoSQL {
     }
 
     @Override
-    public ArrayList<Caminhao> listarCaminhoesDisp() {
+    public ArrayList<Caminhao> listarCaminhoes() {
         String sql = "SELECT * FROM caminhoes";
         ArrayList<Caminhao> caminhões = new ArrayList<>();
         try (PreparedStatement stmt = connection.prepareStatement(sql);
@@ -48,6 +48,7 @@ public class RepositorioCaminhaoSQL implements IRepositorioCaminhaoSQL {
 
             while (rs.next()) {
                 Caminhao caminhao = new Caminhao(
+                		rs.getInt("id"),
                         rs.getString("marca"),
                         rs.getString("modelo"),
                         rs.getString("cor"),
@@ -64,6 +65,27 @@ public class RepositorioCaminhaoSQL implements IRepositorioCaminhaoSQL {
         }
         return caminhões;
     }
+    
+    @Override
+	public Caminhao atualizar(Caminhao caminhao) throws SQLException {
+	    String sql = "UPDATE caminhoes SET marca = ?, modelo = ?, cor = ?, ano = ?, valorVenda = ?, toneladasCarga = ?, caminhaoTipo = ? WHERE placa = ?";
+	    
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        // Definindo os parâmetros da query, exceto a placa, que não será atualizada.
+	        stmt.setString(1, caminhao.getMarca());
+	        stmt.setString(2, caminhao.getModelo());
+	        stmt.setString(3, caminhao.getCor());
+	        stmt.setInt(4, caminhao.getAno());
+	        stmt.setDouble(5, caminhao.getValorVenda());
+	        stmt.setDouble(6, caminhao.getToneladasCarga());
+	        stmt.setString(7, caminhao.getTipo().name()); // Convertendo enum para string
+	        stmt.setString(8, caminhao.getPlaca());  // Usando a placa para identificar qual carro deve ser atualizado
+
+	        // Executando a atualização
+	        stmt.executeUpdate();
+	    }
+	    return caminhao;  // Retorna o carro atualizado
+	}
 
     @Override
     public Caminhao buscarPorPlaca(Caminhao caminhao) {
@@ -74,6 +96,7 @@ public class RepositorioCaminhaoSQL implements IRepositorioCaminhaoSQL {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 resultado = new Caminhao(
+                		rs.getInt("id"),
                         rs.getString("marca"),
                         rs.getString("modelo"),
                         rs.getString("cor"),

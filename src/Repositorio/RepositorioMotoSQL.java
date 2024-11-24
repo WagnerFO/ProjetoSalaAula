@@ -38,9 +38,30 @@ public class RepositorioMotoSQL implements IRepositorioMotoSQL {
             stmt.executeUpdate();
         }
     }
+    
+    @Override
+	public Moto atualizar(Moto moto) throws SQLException {
+	    String sql = "UPDATE motos SET marca = ?, modelo = ?, cor = ?, ano = ?, valorVenda = ?, cilindradas = ?, carroTipo = ? WHERE placa = ?";
+	    
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        // Definindo os parâmetros da query, exceto a placa, que não será atualizada.
+	        stmt.setString(1, moto.getMarca());
+	        stmt.setString(2, moto.getModelo());
+	        stmt.setString(3, moto.getCor());
+	        stmt.setInt(4, moto.getAno());
+	        stmt.setDouble(5, moto.getValorVenda());
+	        stmt.setInt(6, moto.getCilindradas());
+	        stmt.setString(7, moto.getTipo().name()); // Convertendo enum para string
+	        stmt.setString(8, moto.getPlaca());  // Usando a placa para identificar qual carro deve ser atualizado
+
+	        // Executando a atualização
+	        stmt.executeUpdate();
+	    }
+	    return moto;  // Retorna o carro atualizado
+	}
 
     @Override
-    public ArrayList<Moto> listarMotosDisp() {
+    public ArrayList<Moto> listarMotos() {
         String sql = "SELECT * FROM motos";
         ArrayList<Moto> motos = new ArrayList<>();
         try (PreparedStatement stmt = connection.prepareStatement(sql);
@@ -48,6 +69,7 @@ public class RepositorioMotoSQL implements IRepositorioMotoSQL {
 
             while (rs.next()) {
                 Moto moto = new Moto(
+                		rs.getInt("id"),
                         rs.getString("marca"),
                         rs.getString("modelo"),
                         rs.getString("cor"),
@@ -74,6 +96,7 @@ public class RepositorioMotoSQL implements IRepositorioMotoSQL {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 resultado = new Moto(
+                		rs.getInt("id"),
                         rs.getString("marca"),
                         rs.getString("modelo"),
                         rs.getString("cor"),
@@ -103,4 +126,5 @@ public class RepositorioMotoSQL implements IRepositorioMotoSQL {
             e.printStackTrace();
         }
     }
+
 }

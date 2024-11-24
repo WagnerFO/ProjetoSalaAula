@@ -20,17 +20,19 @@ public class MainApp {
     private static repositorioCaminhaoInterface repositorioCaminhao = new RepositorioCaminhao();
     private static repositorioVendaInterface repositorioVenda = new RepositorioVenda();
     
-    private static IRepositorioProprietarioSQL proprietarioRepositorioSQL = new  RepositorioProprietarioSQL();
+    private static IRepositorioProprietarioSQL proprietarioSQL = new  RepositorioProprietarioSQL();
+    private static IRepositorioCarroSQL carroSql = new RepositorioCarroSQL();
+    private static IRepositorioMotoSQL motoSql = new RepositorioMotoSQL();
+    private static IRepositorioCaminhaoSQL caminhaoSql = new RepositorioCaminhaoSQL();
 
     private static serviceProprietarioInterface serviceProprietario = new ServiceProprietario(repositorioProprietario);
-    private static serviceProprietarioInterface serviceProprietarioSQL = new ServiceProprietario(proprietarioRepositorioSQL);
+    private static serviceProprietarioInterface serviceProprietarioSQL = new ServiceProprietario(proprietarioSQL);
     private static serviceCarroInterface serviceCarro = new ServiceCarro(repositorioCarro);
     private static serviceMotoInterface serviceMoto = new ServiceMoto(repositorioMoto);
     private static serviceCaminhaoInterface serviceCaminhao = new ServiceCaminhao(repositorioCaminhao);
     private static serviceVendaInterface serviceVenda = new ServiceVenda(repositorioCarro, repositorioMoto, repositorioCaminhao, repositorioProprietario, repositorioVenda);
    
    
-    
     private static Scanner scanner = new Scanner (System.in);
     
     public static void main(String[] args) throws Exception {
@@ -84,11 +86,7 @@ public class MainApp {
                                 System.out.println("");
                                 break;
                             case 5: 
-                                ListarCarrosDisponiveis();
-                                System.out.println("");
-                                break;
-                            case 6:
-                                ListarCarrosVendidos();
+                                ListarCarros();
                                 System.out.println("");
                                 break;
                             case 0:
@@ -124,11 +122,7 @@ public class MainApp {
                                 System.out.println("");
                                 break;
                             case 5:
-                                listarMotosDisponiveis();
-                                System.out.println("");
-                                break;
-                            case 6:
-                                listarMotosVendidas();
+                                listarMotos();
                                 System.out.println("");
                                 break;
                             case 0:
@@ -165,10 +159,6 @@ public class MainApp {
                                 break;
                             case 5:
                                 listarCaminhoesDisponiveis();
-                                System.out.println("");
-                                break;
-                            case 6:
-                                listarCaminhoesVendidos();
                                 System.out.println("");
                                 break;
                             case 0:
@@ -310,6 +300,7 @@ public class MainApp {
         System.out.println("Escolha uma opção: ");
     }
 
+    
     public static void exibirMenuVeiculo(){
         System.out.println("\n### MENU-VEICULOS ###");
         System.out.println("");
@@ -320,6 +311,7 @@ public class MainApp {
         System.out.println("0. Voltar"+"\n");
     }
 
+    
     public static void exibirMenuCarro(){
         System.out.println("\n### MENU-CARROS ###");
         System.out.println("");
@@ -327,11 +319,11 @@ public class MainApp {
         System.out.println("2. Remover Carro");
         System.out.println("3. Atualizar Carro");
         System.out.println("4. Buscar Carro");
-        System.out.println("5. Listar Carros disponivéis");
-        System.out.println("6. Listar Carros vendidos");
+        System.out.println("5. Listar Carros");
         System.out.println("0. Voltar"+"\n");
     }
 
+    
     public static void cadastrarCarro() throws Exception{
         Carro carro = new Carro();
         System.out.println("\n"+"Cadastrando Novo Carro no Sistema: "+"\n");
@@ -353,25 +345,27 @@ public class MainApp {
         int porta = Integer.parseInt(scanner.nextLine());
         carro.setQuantPortas(porta);
 
-            CarroTipo tipo = null;
-            boolean tipoValido=false;
+        CarroTipo tipo = null;
+        boolean tipoValido = false;
 
-            while (!tipoValido) {
-                System.out.println("Qual Tipo do Carro: Hatch / Sedan / SUV / Sport: ");
-                String tipoCarro = scanner.nextLine().toLowerCase();
-                
-                try{
-                    tipo = CarroTipo.valueOf(tipoCarro);
-                    tipoValido = true;
-                }catch(IllegalArgumentException e){
-                    System.out.println("Tipo Inválido, Por Favor Insira um Tipo Válido (Hatch, Sedan, SUV, Sport). ");
-                }
+        while (!tipoValido) {
+            System.out.println("Qual Tipo do Carro: Hatch / Sedan / SUV / Sport: ");
+            String tipoCarro = scanner.nextLine().trim().toUpperCase();  // .toUpperCase() para garantir correspondência
+
+            try {
+                tipo = CarroTipo.valueOf(tipoCarro);  // Tenta converter a string para o enum
+                tipoValido = true;  // Se o valor for válido, sai do loop
+            } catch (IllegalArgumentException e) {
+                // Caso o tipo fornecido não seja válido, informa o usuário e repete o loop
+                System.out.println("Tipo Inválido, Por Favor Insira um Tipo Válido (Hatch, Sedan, SUV, Sport).");
             }
+        }
 
-            carro.setTipo(tipo);
+        carro.setTipo(tipo);  // Atribui o tipo de carro ao objeto
+
         
         try{
-            serviceCarro.cadastrarCarro(carro);
+            carroSql.salvar(carro);
             System.out.println("Carro Adicionado com Sucesso! ");
             
         }catch(Exception e){
@@ -382,12 +376,14 @@ public class MainApp {
     public static void removerCarro() {
         System.out.println("\nDigite a Placa do Carro que Deseja Remover:");
         String placaDel = scanner.nextLine();
+        Carro carro1 = new Carro();
+        carro1.setPlaca(placaDel);
         try {
-            Carro deletarCarro = serviceCarro.buscarCarro(placaDel);
+            Carro deletarCarro = carroSql.buscarPorPlaca(carro1);
             if (deletarCarro == null) {
                 throw new CarroNaoEncontradoException("O carro com a placa " + placaDel + " não foi encontrado");
             }
-            serviceCarro.removerCarro(deletarCarro);
+            carroSql.remover(deletarCarro);
             System.out.println("\nCarro removido com sucesso!");
         } catch (CarroNaoEncontradoException e) {
             System.out.println("Erro: " + e.getMessage());
@@ -396,15 +392,23 @@ public class MainApp {
         }
     }
 
-    public static void atualizarCarro() throws Exception{
-        System.out.println("Digite a Placa do Veiculo que você deseja Atualizar");
+    public static void atualizarCarro() throws Exception {
+        // Solicitando a placa do carro para atualização
+        System.out.println("Digite a Placa do Veículo que você deseja Atualizar");
         String placa = scanner.nextLine();
-        try{
-            Carro  carroMudar = serviceCarro.buscarCarro(placa);
-            if(carroMudar==null){
-            throw new CarroNaoEncontradoException("\n"+"O Carro com a placa "+placa+" não foi encotrado.");
+
+        // Criando um objeto carro para buscar no banco
+        Carro carro = new Carro();
+        carro.setPlaca(placa);
+
+        try {
+            // Buscando o carro a partir da placa no banco de dados
+            Carro carroMudar = carroSql.buscarPorPlaca(carro); // Método que deve buscar o carro no banco
+            if (carroMudar == null) {
+                throw new CarroNaoEncontradoException("\nO Carro com a placa " + placa + " não foi encontrado.");
             }
 
+            // Exibindo as opções para o usuário atualizar os campos
             System.out.println("Digite a Nova Marca: ");
             String marca = scanner.nextLine();
             System.out.println("Digite o Novo Modelo: ");
@@ -413,63 +417,60 @@ public class MainApp {
             String cor = scanner.nextLine();
             System.out.println("Digite o Novo Ano: ");
             int ano = Integer.parseInt(scanner.nextLine());
-            System.out.println("Digite a Nova Placa: ");
-            String placaCarro = scanner.nextLine();
             System.out.println("Digite o Novo Valor: ");
             double valor = Double.parseDouble(scanner.nextLine());
             System.out.println("Digite a Quantidade de Portas: ");
             int qntPorta = Integer.parseInt(scanner.nextLine());
-                
+
+            // Escolhendo o tipo de carro
             CarroTipo tipo = null;
-            boolean tipoValido=false;
+            boolean tipoValido = false;
             while (!tipoValido) {
                 System.out.println("Qual Tipo do Carro: Hatch / Sedan / SUV / Sport: ");
                 String tipoCarro = scanner.nextLine().toLowerCase();
-                
-                try{
-                    tipo = CarroTipo.valueOf(tipoCarro);
+                try {
+                    tipo = CarroTipo.valueOf(tipoCarro.toUpperCase());  // Convertendo para maiúsculas, pois os tipos são definidos dessa forma
                     tipoValido = true;
-                }catch(IllegalArgumentException e){
-                   System.out.println("Tipo Inválido, Por Favor Insira um Tipo Válido (Hatch, Sedan, SUV, Sport). ");
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Tipo Inválido, Por Favor Insira um Tipo Válido (Hatch, Sedan, SUV, Sport). ");
                 }
             }
 
+            // Atualizando os valores no objeto carro
             carroMudar.setMarca(marca);
             carroMudar.setModelo(modelo);
             carroMudar.setCor(cor);
             carroMudar.setAno(ano);
-            carroMudar.setPlaca(placaCarro);
+
             carroMudar.setValorVenda(valor);
             carroMudar.setQuantPortas(qntPorta);
             carroMudar.setTipo(tipo);
 
-            serviceCarro.alterarCarro(carroMudar);
-            System.out.println("\n"+"Carro Alterado com Sucesso.");
-                
-        }catch(CarroNaoEncontradoException e){
-            System.out.println("Erro: "+e.getMessage());
-        }catch(Exception e){
-            System.out.println("Ocorreu um Erro Inexperado: "+e.getMessage());
+            // Atualizando o carro no banco de dados usando carroSql
+            carroSql.atualizar(carroMudar);  // Método de atualização diretamente no carroSql
+
+            // Mensagem de sucesso
+            System.out.println("\nCarro Alterado com Sucesso.");
+
+        } catch (CarroNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ocorreu um Erro Inesperado: " + e.getMessage());
         }
     }
 
     public static void buscarCarro() {
         System.out.println("Digite a Placa do Veiculo que você deseja Buscar: ");
         String placa = scanner.nextLine();
-
+        Carro carro = new Carro();
+        carro.setPlaca(placa);
         try{
-            Carro encontarCarro = serviceCarro.buscarCarro(placa);
+            Carro encontarCarro = carroSql.buscarPorPlaca(carro);
 
             if(encontarCarro == null){
                 throw new CarroNaoEncontradoException("O carro com a placa "+placa+" não foi encontrado");
             }
 
-            if(serviceCarro.verCarrosVend().contains(encontarCarro)){
-                System.out.println("O carro com a placa "+placa+"já foi Vendido.");
-            }else{
-                System.out.println("O carro com a placa "+placa+" está Disponivel.");
-                System.out.println(encontarCarro);
-            }
         }catch(CarroNaoEncontradoException e){
             System.out.println("Erro: "+e.getMessage());
         }catch(Exception e){
@@ -477,9 +478,8 @@ public class MainApp {
         }
     }
 
-    
-    public static void ListarCarrosDisponiveis(){
-        ArrayList<Carro> carros = serviceCarro.verCarrosDisp();  
+    public static void ListarCarros(){
+        ArrayList<Carro> carros = carroSql.listarCarros();  
         if(carros.isEmpty()){
             System.out.println("\n"+"Nenhum Carro Disponivel para Venda.");
         }else{
@@ -488,19 +488,8 @@ public class MainApp {
             }
         }
     }
-
-    public static void ListarCarrosVendidos(){
-        ArrayList<Carro> carros = serviceCarro.verCarrosVend();  
-        if(carros.isEmpty()){
-            System.out.println("\n"+"Nenhum Carro Vendido.");
-        }else{
-            for(Carro c : carros){
-                System.out.println(c);
-            }
-        }
-    }
     
-
+    
     public static void exibirMenuMoto() {
         System.out.println("\n### MENU-MOTOS ###");
         System.out.println("");
@@ -508,10 +497,10 @@ public class MainApp {
         System.out.println("2. Remover Moto");
         System.out.println("3. Atualizar Moto");
         System.out.println("4. Buscar Moto");
-        System.out.println("5. Listar Motos disponíveis");
-        System.out.println("6. Listar Motos vendidas");
+        System.out.println("5. Listar Motos");
         System.out.println("0. Voltar" + "\n");
     }
+    
     
     public static void cadastrarMoto() throws Exception {
         Moto moto = new Moto();
@@ -530,9 +519,28 @@ public class MainApp {
         System.out.println("Valor da Moto: ");
         double valor = Double.parseDouble(scanner.nextLine());
         moto.setValorVenda(valor);
+        System.out.println("Digite as Cilindradas: ");
+        int cilindradas = Integer.parseInt(scanner.nextLine());
+        moto.setCilindradas(cilindradas);
+        
+        MotoTipo tipo = null;
+        boolean tipoValido = false;
+        while (!tipoValido) {
+            System.out.println("Qual Tipo da Moto: Trilha / Urbana / Sport: ");
+            String tipoMoto = scanner.nextLine().toLowerCase();
+
+            try {
+                tipo = MotoTipo.valueOf(tipoMoto.toUpperCase());
+                tipoValido = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Tipo Inválido, Por Favor Insira um Tipo Válido (Trilha, Urbana, Sport).");
+            }
+        }
+        
+        moto.setTipo(tipo);
     
         try {
-            serviceMoto.cadastrarMoto(moto);
+            motoSql.salvar(moto);
             System.out.println("Moto Adicionada com Sucesso!");
         } catch (Exception e) {
             System.out.println("Erro ao Adicionar moto! " + e.getMessage());
@@ -542,12 +550,14 @@ public class MainApp {
     public static void removerMoto() {
         System.out.println("\nDigite a Placa da Moto que Deseja Remover:");
         String placaDel = scanner.nextLine();
+        Moto moto1 =new Moto();
+        moto1.setPlaca(placaDel);
         try {
-            Moto deletarMoto = serviceMoto.buscarMoto(placaDel);
+            Moto deletarMoto = motoSql.buscarPorPlaca(moto1);
             if (deletarMoto == null) {
                 throw new MotoNaoEncontradaException("A moto com a placa " + placaDel + " não foi encontrada");
             }
-            serviceMoto.removerMoto(deletarMoto);
+            motoSql.remover(deletarMoto);
             System.out.println("\nMoto removida com sucesso!");
         } catch (MotoNaoEncontradaException e) {
             System.out.println("Erro: " + e.getMessage());
@@ -557,14 +567,22 @@ public class MainApp {
     }
     
     public static void atualizarMoto() throws Exception {
+
         System.out.println("Digite a Placa da Moto que você deseja Atualizar");
         String placa = scanner.nextLine();
+
+        // Criando um objeto moto para buscar no banco
+        Moto moto = new Moto();
+        moto.setPlaca(placa);
+
         try {
-            Moto motoMudar = serviceMoto.buscarMoto(placa);
+            // Buscando a moto a partir da placa no banco de dados
+            Moto motoMudar = motoSql.buscarPorPlaca(moto); // Método que deve buscar a moto no banco
             if (motoMudar == null) {
                 throw new MotoNaoEncontradaException("\nA Moto com a placa " + placa + " não foi encontrada.");
             }
-    
+
+            // Solicitando os novos dados ao usuário
             System.out.println("Digite a Nova Marca: ");
             String marca = scanner.nextLine();
             System.out.println("Digite o Novo Modelo: ");
@@ -573,61 +591,58 @@ public class MainApp {
             String cor = scanner.nextLine();
             System.out.println("Digite o Novo Ano: ");
             int ano = Integer.parseInt(scanner.nextLine());
-            System.out.println("Digite a Nova Placa: ");
-            String placaMoto = scanner.nextLine();
             System.out.println("Digite o Novo Valor: ");
             double valor = Double.parseDouble(scanner.nextLine());
             System.out.println("Digite as Cilindradas: ");
             int cilindradas = Integer.parseInt(scanner.nextLine());
-    
+
+            // Escolhendo o novo tipo da moto
             MotoTipo tipo = null;
             boolean tipoValido = false;
             while (!tipoValido) {
                 System.out.println("Qual Tipo da Moto: Trilha / Urbana / Sport: ");
-                String tipoMoto = scanner.nextLine().toLowerCase();
-    
+                String tipoMoto = scanner.nextLine().trim().toLowerCase();
+
                 try {
-                    tipo = MotoTipo.valueOf(tipoMoto);
+                    tipo = MotoTipo.valueOf(tipoMoto.toUpperCase());
                     tipoValido = true;
                 } catch (IllegalArgumentException e) {
                     System.out.println("Tipo Inválido, Por Favor Insira um Tipo Válido (Trilha, Urbana, Sport).");
                 }
             }
-    
+
+            // Atualizando os valores da moto
             motoMudar.setMarca(marca);
             motoMudar.setModelo(modelo);
             motoMudar.setCor(cor);
             motoMudar.setAno(ano);
-            motoMudar.setPlaca(placaMoto);
             motoMudar.setValorVenda(valor);
             motoMudar.setCilindradas(cilindradas);
             motoMudar.setTipo(tipo);
-    
-            serviceMoto.alterarMoto(motoMudar);
+
+            // Atualizando no banco
+            motoSql.atualizar(motoMudar);
             System.out.println("\nMoto Alterada com Sucesso.");
+
         } catch (MotoNaoEncontradaException e) {
             System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Ocorreu um Erro Inesperado: " + e.getMessage());
+            e.printStackTrace(); // Diagnóstico adicional durante desenvolvimento
         }
     }
     
     public static void buscarMoto() {
         System.out.println("Digite a Placa da Moto que você deseja Buscar: ");
         String placa = scanner.nextLine();
+        Moto moto = new Moto();
+        moto.setPlaca(placa);
     
         try {
-            Moto encontrarMoto = serviceMoto.buscarMoto(placa);
+            Moto encontrarMoto = motoSql.buscarPorPlaca(moto);
     
             if (encontrarMoto == null) {
                 throw new MotoNaoEncontradaException("A moto com a placa " + placa + " não foi encontrada");
-            }
-    
-            if (serviceMoto.verMotosVend().contains(encontrarMoto)) {
-                System.out.println("A moto com a placa " + placa + " já foi Vendida.");
-            } else {
-                System.out.println("A moto com a placa " + placa + " está Disponível.");
-                System.out.println(encontrarMoto);
             }
         } catch (MotoNaoEncontradaException e) {
             System.out.println("Erro: " + e.getMessage());
@@ -636,9 +651,8 @@ public class MainApp {
         }
     }
         
-    
-    public static void listarMotosDisponiveis() {
-        ArrayList<Moto> motos = serviceMoto.verMotosDisp();
+    public static void listarMotos() {
+        ArrayList<Moto> motos = motoSql.listarMotos();
         if (motos.isEmpty()) {
             System.out.println("\nNenhuma Moto Disponível para Venda.");
         } else {
@@ -648,18 +662,7 @@ public class MainApp {
         }
     }
     
-    public static void listarMotosVendidas() {
-        ArrayList<Moto> motos = serviceMoto.verMotosVend();
-        if (motos.isEmpty()) {
-            System.out.println("\nNenhuma Moto Vendida.");
-        } else {
-            for (Moto m : motos) {
-                System.out.println(m);
-            }
-        }
-    }
     
-
     public static void exibirMenuCaminhao() {
         System.out.println("\n### MENU-CAMINHÕES ###");
         System.out.println("");
@@ -667,10 +670,10 @@ public class MainApp {
         System.out.println("2. Remover Caminhão");
         System.out.println("3. Atualizar Caminhão");
         System.out.println("4. Buscar Caminhão");
-        System.out.println("5. Listar Caminhões disponíveis");
-        System.out.println("6. Listar Caminhões vendidos");
+        System.out.println("5. Listar Caminhões");
         System.out.println("0. Voltar" + "\n");
     }
+    
     
     public static void cadastrarCaminhao() throws Exception {
         Caminhao caminhao = new Caminhao();
@@ -692,9 +695,25 @@ public class MainApp {
         System.out.println("Capacidade de Carga (em toneladas): ");
         double carga = Double.parseDouble(scanner.nextLine());
         caminhao.setToneladasCarga(carga);
+        
+        CaminhaoTipo tipo = null;
+        boolean tipoValido = false;
+        while(!tipoValido) {
+        	System.out.println("Qual tipo do Caminhão: TRUCK / BITRUCK / CARRETA: ");
+        	String tipoCaminhao = scanner.nextLine().toLowerCase();
+        	
+        	try {
+        		tipo = CaminhaoTipo.valueOf(tipoCaminhao.toUpperCase());
+        		tipoValido = true;
+        	}catch(IllegalArgumentException e) {
+        		System.out.println("Tipo Inválido, Por vaor insira um tipo válido: TRUCK / BITRUCK / CARRETA");
+        	}
+        }
+        caminhao.setTipo(tipo);
+        
     
         try {
-            serviceCaminhao.cadastrarCaminhao(caminhao);
+            caminhaoSql.salvar(caminhao);
             System.out.println("Caminhão Adicionado com Sucesso!");
         } catch (Exception e) {
             System.out.println("Erro ao Adicionar caminhão! " + e.getMessage());
@@ -704,12 +723,14 @@ public class MainApp {
     public static void removerCaminhao() {
         System.out.println("\nDigite a Placa do Caminhão que Deseja Remover:");
         String placaDel = scanner.nextLine();
+        Caminhao caminhao = new Caminhao();
+        caminhao.setPlaca(placaDel);
         try {
-            Caminhao deletarCaminhao = serviceCaminhao.buscarCaminhao(placaDel);
+            Caminhao deletarCaminhao = caminhaoSql.buscarPorPlaca(caminhao);
             if (deletarCaminhao == null) {
                 throw new CaminhaoNaoEncontradoException("O caminhão com a placa " + placaDel + " não foi encontrado");
             }
-            serviceCaminhao.removerCaminhao(deletarCaminhao);
+            caminhaoSql.remover(deletarCaminhao);
             System.out.println("\nCaminhão removido com sucesso!");
         } catch (CaminhaoNaoEncontradoException e) {
             System.out.println("Erro: " + e.getMessage());
@@ -721,8 +742,10 @@ public class MainApp {
     public static void atualizarCaminhao() throws Exception {
         System.out.println("Digite a Placa do Caminhão que você deseja Atualizar");
         String placa = scanner.nextLine();
+        Caminhao caminhao = new Caminhao();
+        caminhao.setPlaca(placa);
         try {
-            Caminhao caminhaoMudar = serviceCaminhao.buscarCaminhao(placa);
+            Caminhao caminhaoMudar = caminhaoSql.buscarPorPlaca(caminhao);
             if (caminhaoMudar == null) {
                 throw new CaminhaoNaoEncontradoException("\nO Caminhão com a placa " + placa + " não foi encontrado.");
             }
@@ -735,8 +758,6 @@ public class MainApp {
             String cor = scanner.nextLine();
             System.out.println("Digite o Novo Ano: ");
             int ano = Integer.parseInt(scanner.nextLine());
-            System.out.println("Digite a Nova Placa: ");
-            String placaCaminhao = scanner.nextLine();
             System.out.println("Digite o Novo Valor: ");
             double valor = Double.parseDouble(scanner.nextLine());
             System.out.println("Digite a Tonelagem de Carga: ");
@@ -744,28 +765,27 @@ public class MainApp {
     
             CaminhaoTipo tipo = null;
             boolean tipoValido = false;
-            while (!tipoValido) {
-                System.out.println("Qual Tipo do Caminhão: Truck / Bitruck / Carreta: ");
-                String tipoCaminhao = scanner.nextLine().toLowerCase();
-    
-                try {
-                    tipo = CaminhaoTipo.valueOf(tipoCaminhao);
-                    tipoValido = true;
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Tipo Inválido, Por Favor Insira um Tipo Válido (Truck, Bitruck, Carreta).");
-                }
+            while(!tipoValido) {
+            	System.out.println("Qual tipo do Caminhão: TRUCK / BITRUCK / CARRETA: ");
+            	String tipoCaminhao = scanner.nextLine().toLowerCase();
+            	
+            	try {
+            		tipo = CaminhaoTipo.valueOf(tipoCaminhao.toUpperCase());
+            		tipoValido = true;
+            	}catch(IllegalArgumentException e) {
+            		System.out.println("Tipo Inválido, Por vaor insira um tipo válido: TRUCK / BITRUCK / CARRETA");
+            	}
             }
     
             caminhaoMudar.setMarca(marca);
             caminhaoMudar.setModelo(modelo);
             caminhaoMudar.setCor(cor);
             caminhaoMudar.setAno(ano);
-            caminhaoMudar.setPlaca(placaCaminhao);
             caminhaoMudar.setValorVenda(valor);
             caminhaoMudar.setToneladasCarga(toneladasCarga);
             caminhaoMudar.setTipo(tipo);
     
-            serviceCaminhao.alterarCaminhao(caminhaoMudar);
+            caminhaoSql.atualizar(caminhaoMudar);
             System.out.println("\nCaminhão Alterado com Sucesso.");
         } catch (CaminhaoNaoEncontradoException e) {
             System.out.println("Erro: " + e.getMessage());
@@ -777,19 +797,14 @@ public class MainApp {
     public static void buscarCaminhao() {
         System.out.println("Digite a Placa do Caminhão que você deseja Buscar: ");
         String placa = scanner.nextLine();
+        Caminhao caminhao = new Caminhao();
+        caminhao.setPlaca(placa);
     
         try {
-            Caminhao encontrarCaminhao = serviceCaminhao.buscarCaminhao(placa);
+            Caminhao encontrarCaminhao = caminhaoSql.buscarPorPlaca(caminhao);
     
             if (encontrarCaminhao == null) {
                 throw new CaminhaoNaoEncontradoException("O caminhão com a placa " + placa + " não foi encontrado");
-            }
-    
-            if (serviceCaminhao.verCaminhoesVend().contains(encontrarCaminhao)) {
-                System.out.println("O caminhão com a placa " + placa + " já foi Vendido.");
-            } else {
-                System.out.println("O caminhão com a placa " + placa + " está Disponível.");
-                System.out.println(encontrarCaminhao);
             }
         } catch (CaminhaoNaoEncontradoException e) {
             System.out.println("Erro: " + e.getMessage());
@@ -798,22 +813,10 @@ public class MainApp {
         }
     }
         
-    
     public static void listarCaminhoesDisponiveis() {
-        ArrayList<Caminhao> caminhoes = serviceCaminhao.verCaminhoesDisp();
+        ArrayList<Caminhao> caminhoes = caminhaoSql.listarCaminhoes();
         if (caminhoes.isEmpty()) {
             System.out.println("\nNenhum Caminhão Disponível para Venda.");
-        } else {
-            for (Caminhao c : caminhoes) {
-                System.out.println(c);
-            }
-        }
-    }
-    
-    public static void listarCaminhoesVendidos() {
-        ArrayList<Caminhao> caminhoes = serviceCaminhao.verCaminhoesVend();
-        if (caminhoes.isEmpty()) {
-            System.out.println("\nNenhum Caminhão Vendido.");
         } else {
             for (Caminhao c : caminhoes) {
                 System.out.println(c);
@@ -833,6 +836,7 @@ public class MainApp {
         System.out.println("0. Sair");
     }
     
+    
     public static void cadastrarProprietario() throws Exception {
         Proprietario proprietario = new Proprietario();
         System.out.println("Cadastrando Novo Proprietário no Sistema: ");
@@ -850,16 +854,11 @@ public class MainApp {
         proprietario.setEndereco(scanner.nextLine());
     
         try {
-            serviceProprietario.cadastrarProprietario(proprietario);
             serviceProprietarioSQL.adicionarProprietario(proprietario);
             System.out.println("Proprietário Adicionado com Sucesso!");
-            
-            
         } catch (Exception e) {
             System.out.println("Erro ao Adicionar Proprietário! " + e.getMessage());
-        }
-                
-        	
+        }  	
     }
     
     public static void removerProprietario() {
@@ -890,21 +889,17 @@ public class MainApp {
     public static void atualizarProprietario() {
         System.out.println("Digite o CPF do Proprietário que você deseja Atualizar:");
         String cpf = scanner.nextLine();
-    
+
         try {
-            //Proprietario proprietarioMudar = serviceProprietario.buscarProprietario(cpf);
-            Proprietario proprietarioMudarSQL = serviceProprietarioSQL.pesquisarPorprietario(cpf);
-    
-            //if (proprietarioMudar == null) {
-            //    throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
-            //}
-            if(proprietarioMudarSQL == null){
+            // Busca do proprietário no banco de dados
+            Proprietario proprietarioMudarSQL = proprietarioSQL.pesquisarProprietarios(cpf);
+
+            if (proprietarioMudarSQL == null) {
                 throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
             }
-    
-            System.out.println("Digite o novo CPF: ");
-            String newCpf = scanner.nextLine();
-            System.out.println("Digite o Novo Nome: ");
+
+            // Atualização dos dados do proprietário
+            System.out.println("\nDigite o Novo Nome: ");
             String nome = scanner.nextLine();
             System.out.println("Digite a Nova Idade: ");
             int idade = Integer.parseInt(scanner.nextLine());
@@ -912,48 +907,39 @@ public class MainApp {
             String telefoneContato = scanner.nextLine();
             System.out.println("Digite o Novo Endereço: ");
             String endereco = scanner.nextLine();
-    
-            
-            //proprietarioMudar.setNome(nome);
+
+            // Atualizando o objeto Proprietario
             proprietarioMudarSQL.setNome(nome);
-            //proprietarioMudar.setIdade(idade);
             proprietarioMudarSQL.setIdade(idade);
-            //proprietarioMudar.setTelefoneContato(telefoneContato);
             proprietarioMudarSQL.setTelefoneContato(telefoneContato);
-            //proprietarioMudar.setEndereco(endereco);
             proprietarioMudarSQL.setEndereco(endereco);
-            //proprietarioMudar.setCpf(newCpf);
-            proprietarioMudarSQL.setCpf(newCpf);
-    
-            //serviceProprietario.atualizarProprietario(proprietarioMudar);
-            serviceProprietarioSQL.alterarProp(proprietarioMudarSQL, cpf);
-    
+
+            // Persistindo as alterações no banco de dados
+            proprietarioSQL.alterarProprietario(proprietarioMudarSQL);
+
             System.out.println("Proprietário Atualizado com Sucesso!");
-    
+
         } catch (ProprietarioNaoEncontradoException e) {
             System.out.println("Erro: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: Idade inválida. Por favor, insira um número inteiro.");
         } catch (Exception e) {
             System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
         }
     }
-    
+
     public static void buscarProprietario() {
         System.out.println("Digite o CPF do Proprietário que você deseja Buscar:");
         String cpf = scanner.nextLine();
     
         try {
-            //Proprietario proprietarioBuscar = serviceProprietario.buscarProprietario(cpf);
             Proprietario proprietarioBuscarSql = serviceProprietarioSQL.pesquisarPorprietario(cpf);
-    
-            //if (proprietarioBuscar == null) {
-            //    throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
-            //}
+            
             if(proprietarioBuscarSql == null){
                 throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
             }
     
-            //System.out.println("Proprietário Encontrado: " + proprietarioBuscar.getNome());
-            System.out.println("Proprietário Encontrado: " + proprietarioBuscarSql.getNome());
+            System.out.println("Proprietário Encontrado: " + proprietarioBuscarSql.toString());
 
         } catch (ProprietarioNaoEncontradoException e) {
             System.out.println("Erro: " + e.getMessage());
@@ -963,14 +949,6 @@ public class MainApp {
     }
     
     public static void listarProprietarios() throws SQLException {
-        /*ArrayList<Proprietario> proprietarios = serviceProprietario.verProprietario();
-        if(proprietarios.isEmpty()){
-            System.out.println("Não há Proprietários Cadastrados.");
-        } else {
-            for(Proprietario p : proprietarios){
-                System.out.println(p);
-            }
-        }*/
         ArrayList<Proprietario> proprietariosSql = serviceProprietarioSQL.listarTodos();
         if(proprietariosSql.isEmpty()){
             System.out.println("Não há Proprietários Cadastrados.");
@@ -980,6 +958,7 @@ public class MainApp {
             }
         }
     }
+    
     
     public static void exibirMenuVendas() {
         System.out.println("\n### MENU-VENDAS ###");
@@ -992,6 +971,7 @@ public class MainApp {
         System.out.println("0. Sair");
     }
     
+    
     public static void exibirMenuVendaVeiculos() {
         System.out.println("\n### VENDA VEICULOS ###");
         System.out.println("");
@@ -1001,102 +981,133 @@ public class MainApp {
         System.out.println("0. Sair");
     }
     
+    
     public static void realizarVendaCarro() {
         System.out.println("Digite o CPF do Proprietário: ");
         String cpf = scanner.nextLine();
-    
+
         try {
-            Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
-    
+            Proprietario proprietario = proprietarioSQL.pesquisarProprietarios(cpf);
+
             if (proprietario == null) {
                 throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
             }
-    
+
+            // Verificar se a lista de veículos já está inicializada
+            if (proprietario.getVeiculos() == null) {
+                proprietario.setVeiculos(new ArrayList<Veiculo>());
+            }
+
             System.out.println("Digite a Placa do Carro: ");
             String placa = scanner.nextLine();
-    
-            Carro carro = serviceCarro.buscarCarro(placa); // Busca pelo carro
-    
+            Carro carro = new Carro();
+            carro.setPlaca(placa);
+
+            // Buscar o carro
+            carro = carroSql.buscarPorPlaca(carro); // O método deve retornar o carro encontrado ou lançar exceção
             if (carro == null) {
-                throw new CarroNaoEncontradoException("Carro com a placa " + placa + " não foi encontrado.");
+                throw new CarroNaoEncontradoException("Carro com a placa " + placa + " não encontrado.");
             }
-    
-            serviceVenda.venderCarro(placa, proprietario);
+
+            // Adicionar o carro ao proprietário
+            proprietario.adicionarVeiculo(carro);
+
+            // Salvar o veículo na venda
+            proprietarioSQL.salvarVeiculo(proprietario.getCpf(), carro, "CARRO");
+
             System.out.println("Carro vendido com sucesso!");
-    
-        } catch (ProprietarioNaoEncontradoException e) {
-            System.out.println("Erro: " + e.getMessage());
-        } catch (CarroNaoEncontradoException e) {
+
+        } catch (ProprietarioNaoEncontradoException | CarroNaoEncontradoException e) {
             System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Ocorreu um erro inesperado ao realizar a venda: " + e.getMessage());
         }
     }
-    
+
     public static void realizarVendaMoto() {
         System.out.println("Digite o CPF do Proprietário: ");
         String cpf = scanner.nextLine();
-    
+
         try {
-            Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
-    
+            Proprietario proprietario = proprietarioSQL.pesquisarProprietarios(cpf);
+
             if (proprietario == null) {
                 throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
             }
-    
+
+            // Verificar se a lista de veículos já está inicializada
+            if (proprietario.getVeiculos() == null) {
+                proprietario.setVeiculos(new ArrayList<Veiculo>());
+            }
+
             System.out.println("Digite a Placa da Moto: ");
             String placa = scanner.nextLine();
-    
-            Moto moto = serviceMoto.buscarMoto(placa); // Busca pela moto
-    
+            Moto moto = new Moto();
+            moto.setPlaca(placa);
+
+            // Buscar a moto
+            moto = motoSql.buscarPorPlaca(moto); // O método deve retornar a moto encontrada ou lançar exceção
             if (moto == null) {
-                throw new MotoNaoEncontradaException("Moto com a placa " + placa + " não foi encontrada.");
+                throw new MotoNaoEncontradaException("Moto com a placa " + placa + " não encontrada.");
             }
-    
-            serviceVenda.venderMoto(placa, proprietario);
+
+            // Adicionar a moto ao proprietário
+            proprietario.adicionarVeiculo(moto);
+
+            // Salvar a moto na venda
+            proprietarioSQL.salvarVeiculo(proprietario.getCpf(), moto, "MOTO");
+
             System.out.println("Moto vendida com sucesso!");
-    
-        } catch (ProprietarioNaoEncontradoException e) {
-            System.out.println("Erro: " + e.getMessage());
-        } catch (MotoNaoEncontradaException e) {
+
+        } catch (ProprietarioNaoEncontradoException | MotoNaoEncontradaException e) {
             System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Ocorreu um erro inesperado ao realizar a venda: " + e.getMessage());
         }
     }
-    
+
     public static void realizarVendaCaminhao() {
         System.out.println("Digite o CPF do Proprietário: ");
         String cpf = scanner.nextLine();
-    
+
         try {
-            Proprietario proprietario = serviceProprietario.buscarProprietario(cpf);
-    
+            Proprietario proprietario = proprietarioSQL.pesquisarProprietarios(cpf);
+
             if (proprietario == null) {
                 throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpf + " não foi encontrado.");
             }
-    
+
+            // Verificar se a lista de veículos já está inicializada
+            if (proprietario.getVeiculos() == null) {
+                proprietario.setVeiculos(new ArrayList<Veiculo>());
+            }
+
             System.out.println("Digite a Placa do Caminhão: ");
             String placa = scanner.nextLine();
-    
-            Caminhao caminhao = serviceCaminhao.buscarCaminhao(placa); // Busca pelo caminhão
-    
+            Caminhao caminhao = new Caminhao();
+            caminhao.setPlaca(placa);
+
+            // Buscar o caminhão
+            caminhao = caminhaoSql.buscarPorPlaca(caminhao); // O método deve retornar o caminhão encontrado ou lançar exceção
             if (caminhao == null) {
-                throw new CaminhaoNaoEncontradoException("Caminhão com a placa " + placa + " não foi encontrado.");
+                throw new CaminhaoNaoEncontradoException("Caminhão com a placa " + placa + " não encontrado.");
             }
-    
-            serviceVenda.venderCaminhao(placa, proprietario);
+
+            // Adicionar o caminhão ao proprietário
+            proprietario.adicionarVeiculo(caminhao);
+
+            // Salvar o caminhão na venda
+            proprietarioSQL.salvarVeiculo(proprietario.getCpf(), caminhao, "CAMINHAO");
+
             System.out.println("Caminhão vendido com sucesso!");
-    
-        } catch (ProprietarioNaoEncontradoException e) {
-            System.out.println("Erro: " + e.getMessage());
-        } catch (CaminhaoNaoEncontradoException e) {
+
+        } catch (ProprietarioNaoEncontradoException | CaminhaoNaoEncontradoException e) {
             System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Ocorreu um erro inesperado ao realizar a venda: " + e.getMessage());
         }
     }
-    
+
 
     public static void removerVenda() {
         System.out.println("Digite o ID da Venda a ser removida: ");

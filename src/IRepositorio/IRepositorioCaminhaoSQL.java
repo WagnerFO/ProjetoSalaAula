@@ -8,7 +8,8 @@ import Entity.Caminhao;
 public interface IRepositorioCaminhaoSQL {
 	
 	void salvar(Caminhao caminhao) throws SQLException;
-	ArrayList<Caminhao> listarCaminhoesDisp();
+	ArrayList<Caminhao> listarCaminhoes();
 	Caminhao buscarPorPlaca(Caminhao caminhao);
 	void remover(Caminhao caminhao);
+	Caminhao atualizar(Caminhao caminhao) throws SQLException;
 }

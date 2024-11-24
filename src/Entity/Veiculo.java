@@ -12,6 +12,9 @@ public abstract class  Veiculo {
 
     public Veiculo(){
     }
+    public Veiculo(String placa) {
+    	this.placa=placa;
+    }
 
     public Veiculo(String marca, String modelo, String cor, int ano, String placa, double valorVenda){
 		this.marca=marca;

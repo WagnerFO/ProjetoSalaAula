@@ -9,7 +9,10 @@ public class Caminhao extends Veiculo {
     private CaminhaoTipo tipo;
 
     public Caminhao() {
+    }
     
+    public Caminhao(String placa) {
+    	super(placa);
     }
 
     public Caminhao(String marca, String modelo, String cor, int ano, String placa, double valorVenda, double toneladasCarga, CaminhaoTipo tipo) {
@@ -27,6 +30,10 @@ public class Caminhao extends Veiculo {
 
     public int getId() {
         return id;
+    }
+    
+    public void setId(int id) {
+    	this.id=id;
     }
 
     public double getToneladasCarga() {

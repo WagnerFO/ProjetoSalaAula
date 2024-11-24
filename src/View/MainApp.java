@@ -3,7 +3,9 @@ package View;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import Entity.*;
 import Entity.Enum.*;
@@ -18,8 +20,6 @@ public class MainApp {
     private static repositorioCarroInterface repositorioCarro = new RepositorioCarro();
     private static repositorioMotoInterface repositorioMoto = new RepositorioMoto();
     private static repositorioCaminhaoInterface repositorioCaminhao = new RepositorioCaminhao();
-    private static repositorioVendaInterface repositorioVenda = new RepositorioVenda();
-    
     private static IRepositorioProprietarioSQL proprietarioSQL = new  RepositorioProprietarioSQL();
     private static IRepositorioCarroSQL carroSql = new RepositorioCarroSQL();
     private static IRepositorioMotoSQL motoSql = new RepositorioMotoSQL();
@@ -30,9 +30,6 @@ public class MainApp {
     private static serviceCarroInterface serviceCarro = new ServiceCarro(repositorioCarro);
     private static serviceMotoInterface serviceMoto = new ServiceMoto(repositorioMoto);
     private static serviceCaminhaoInterface serviceCaminhao = new ServiceCaminhao(repositorioCaminhao);
-    private static serviceVendaInterface serviceVenda = new ServiceVenda(repositorioCarro, repositorioMoto, repositorioCaminhao, repositorioProprietario, repositorioVenda);
-   
-   
     private static Scanner scanner = new Scanner (System.in);
     
     public static void main(String[] args) throws Exception {
@@ -866,17 +863,12 @@ public class MainApp {
         String cpfDel = scanner.nextLine();
     
         try {
-            //Proprietario delProprietario = serviceProprietario.buscarProprietario(cpfDel);
-            Proprietario delProprietarioSql = serviceProprietarioSQL.pesquisarPorprietario(cpfDel);
+        	Proprietario delProprietarioSql = serviceProprietarioSQL.pesquisarPorprietario(cpfDel);
     
-            //if (delProprietario == null) {
-            //    throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpfDel + " não foi encontrado.");
-            //}
             if(delProprietarioSql ==null ){
                 throw new ProprietarioNaoEncontradoException("Proprietário com o CPF " + cpfDel + " não foi encontrado.");
             }
-    
-            //serviceProprietario.removerProprietario(delProprietario);
+            
             serviceProprietarioSQL.excluirProp(delProprietarioSql);
             System.out.println("Proprietário Removido com Sucesso.");
         } catch (ProprietarioNaoEncontradoException e) {
@@ -1108,72 +1100,146 @@ public class MainApp {
         }
     }
 
-
     public static void removerVenda() {
-        System.out.println("Digite o ID da Venda a ser removida: ");
-        int id = Integer.parseInt(scanner.nextLine());
-    
+        System.out.println("Digite o número da Venda a ser removida: ");
+        int numVenda = Integer.parseInt(scanner.nextLine());
+
         try {
-            Venda venda = serviceVenda.buscarVendaPorId(id);
-    
-            if (venda == null) {
-                throw new VendaNaoEncontradaException("Venda com o ID " + id + " não foi encontrada.");
-            }
-    
-            serviceVenda.removerVenda(id);
-            System.out.println("Venda removida com sucesso!");
-    
-        } catch (VendaNaoEncontradaException e) {
-            System.out.println("Erro: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Erro ao remover venda: " + e.getMessage());
+            // Remover todos os registros associados à venda
+            proprietarioSQL.removerVeiculosDaVenda(numVenda);
+
+            System.out.println("Venda e veículos associados removidos com sucesso!");
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao remover a venda: " + e.getMessage());
         }
     }
-    
+
     public static void atualizarVenda() {
-        System.out.println("Digite o ID da Venda a ser atualizada: ");
-        int id = Integer.parseInt(scanner.nextLine());
-    
+        System.out.println("Digite o número da Venda a ser atualizada: ");
+        int numVenda = Integer.parseInt(scanner.nextLine());
+
         try {
-            Venda vendaExistente = serviceVenda.buscarVendaPorId(id);
-    
-            if (vendaExistente == null) {
-                throw new VendaNaoEncontradaException("Venda com o ID " + id + " não foi encontrada.");
+            // Buscar os registros da tabela venda_veiculo pelo número da venda
+            List<Map<String, String>> registros = proprietarioSQL.buscarRegistrosPorNumVenda(numVenda);
+
+            if (registros.isEmpty()) {
+                throw new VendaNaoEncontradaException("Venda com o número " + numVenda + " não foi encontrada.");
             }
-    
-            System.out.println("Digite o CPF do novo proprietário (ou mantenha o anterior): ");
-            String cpfNovo = scanner.nextLine();
-            Proprietario novoProprietario = serviceProprietario.buscarProprietario(cpfNovo);
-    
-            vendaExistente.setProprietario(novoProprietario);
-    
-            serviceVenda.atualizarVenda(id, vendaExistente);
+
+            // Buscar o CPF atual do proprietário
+            String cpfAtual = registros.get(0).get("proprietario_cpf");
+
+            // Mostrar CPF atual do proprietário
+            System.out.println("CPF atual do proprietário: " + cpfAtual);
+            System.out.println("Digite o CPF do novo proprietário (ou pressione Enter para manter o atual): ");
+            String cpfNovo = scanner.nextLine().trim();
+
+            // Usar o CPF atual se nenhum novo CPF for informado
+            if (cpfNovo.isEmpty()) {
+                cpfNovo = cpfAtual;
+            }
+
+            // Verificar se o novo proprietário existe
+            Proprietario novoProprietario = proprietarioSQL.pesquisarProprietarios(cpfNovo);
+            if (novoProprietario == null) {
+                throw new Exception("Proprietário com CPF " + cpfNovo + " não encontrado.");
+            }
+
+            // Atualizar o proprietário na tabela venda_veiculo
+            proprietarioSQL.atualizarProprietarioVenda(numVenda, cpfNovo);
+
+            // Agora, vamos verificar se o veículo também precisa ser atualizado
+            System.out.println("Veículos vendidos na venda " + numVenda + ":");
+
+            // Exibir veículos atuais
+            for (Map<String, String> registro : registros) {
+                String placaAtual = registro.get("veiculo_placa");
+                String tipoAtual = registro.get("veiculo_tipo");
+
+                System.out.println("Veículo atual: " + placaAtual + " (" + tipoAtual + ")");
+
+                // Perguntar se o veículo também deve ser alterado
+                System.out.println("Deseja alterar esse veículo? (Digite 'sim' para alterar ou 'não' para manter): ");
+                String resposta = scanner.nextLine().trim().toLowerCase();
+
+                if (resposta.equals("sim")) {
+                    // Solicitar nova placa e tipo
+                    System.out.println("Digite a nova placa do veículo (ou pressione Enter para manter a atual): ");
+                    String novaPlaca = scanner.nextLine().trim();
+                    if (novaPlaca.isEmpty()) {
+                        novaPlaca = placaAtual; // Manter a placa atual se não for informada uma nova
+                    }
+
+                    System.out.println("Digite o novo tipo do veículo (CARRO, MOTO, CAMINHAO, ou pressione Enter para manter o atual): ");
+                    String novoTipo = scanner.nextLine().trim();
+                    if (novoTipo.isEmpty()) {
+                        novoTipo = tipoAtual; // Manter o tipo atual se não for informado um novo
+                    }
+
+                    // Atualizar veículo na tabela de vendas
+                    proprietarioSQL.atualizarVeiculoNaVenda(numVenda, placaAtual, novaPlaca, novoTipo);
+                    System.out.println("Veículo atualizado com sucesso.");
+                }
+            }
+
             System.out.println("Venda atualizada com sucesso!");
-    
+
         } catch (VendaNaoEncontradaException e) {
             System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Erro ao atualizar venda: " + e.getMessage());
         }
     }
+
     
     public static void buscarVenda() {
-        System.out.println("Digite o ID da Venda: ");
-        int id = Integer.parseInt(scanner.nextLine());
-    
+        System.out.println("Digite o número da Venda: ");
+        int numVenda = Integer.parseInt(scanner.nextLine());
+
         try {
-            Venda venda = serviceVenda.buscarVendaPorId(id);
-    
-            if (venda == null) {
-                throw new VendaNaoEncontradaException("Venda com o ID " + id + " não foi encontrada.");
+            // Buscar os registros da tabela venda_veiculo relacionados ao número da venda
+            List<Map<String, String>> registros = proprietarioSQL.buscarRegistrosPorNumVenda(numVenda);
+
+            if (registros.isEmpty()) {
+                throw new VendaNaoEncontradaException("Venda com o número " + numVenda + " não foi encontrada.");
             }
-    
-            System.out.println("Venda ID: " + venda.getId() + " - Proprietário: " + venda.getProprietario().getNome());
-            System.out.println("Veículos Vendidos: ");
-            for (Veiculo veiculo : venda.getVeiculosVendidos()) {
-                System.out.println(" - " + veiculo.getPlaca() + " (" + veiculo.getClass().getSimpleName() + ")");
+
+            // Extrair o CPF do proprietário
+            String cpfProprietario = registros.get(0).get("proprietario_cpf");
+            Proprietario proprietario = proprietarioSQL.pesquisarProprietarios(cpfProprietario);
+            if (proprietario == null) {
+                throw new SQLException("Proprietário com CPF " + cpfProprietario + " não encontrado.");
             }
-    
+
+            // Exibir informações da venda
+            System.out.println("Venda Número: " + numVenda + " - Proprietário: " + proprietario.getNome());
+            System.out.println("Veículos Vendidos:");
+
+            // Buscar e exibir informações de cada veículo
+            for (Map<String, String> registro : registros) {
+                String placa = registro.get("veiculo_placa");
+                String tipo = registro.get("veiculo_tipo");
+
+                Veiculo veiculo;
+                if (tipo.equalsIgnoreCase("CARRO")) {
+                    veiculo = carroSql.buscarPorPlaca(new Carro(placa));
+                } else if (tipo.equalsIgnoreCase("MOTO")) {
+                    veiculo = motoSql.buscarPorPlaca(new Moto(placa));
+                } else if (tipo.equalsIgnoreCase("CAMINHAO")) {
+                    veiculo = caminhaoSql.buscarPorPlaca(new Caminhao(placa));
+                } else {
+                    System.out.println(" - Tipo de veículo desconhecido: " + tipo);
+                    continue;
+                }
+
+                if (veiculo != null) {
+                    System.out.println(" - " + veiculo.getPlaca() + " (" + veiculo.getClass().getSimpleName() + ")");
+                } else {
+                    System.out.println(" - Veículo com placa " + placa + " não encontrado na tabela de " + tipo.toLowerCase() + "s.");
+                }
+            }
+
         } catch (VendaNaoEncontradaException e) {
             System.out.println("Erro: " + e.getMessage());
         } catch (Exception e) {
@@ -1181,21 +1247,66 @@ public class MainApp {
         }
     }
     
-    
     public static void listarVendas() {
-        List<Venda> vendas = serviceVenda.listarVendas();
-        if (vendas.isEmpty()) {
-            System.out.println("Nenhuma venda registrada.");
-        } else {
-            for (Venda venda : vendas) {
-                System.out.println("Venda ID: " + venda.getId() + " - Proprietário: " + venda.getProprietario().getNome());
-                System.out.println("Veículos Vendidos: ");
-                for (Veiculo veiculo : venda.getVeiculosVendidos()) {
-                    System.out.println(" - " + veiculo.getPlaca() + " (" + veiculo.getClass().getSimpleName() + ")");
+        try {
+            // Buscar todos os registros da tabela venda_veiculo
+            List<Map<String, String>> registros = proprietarioSQL.listarRegistrosVenda();
+
+            if (registros.isEmpty()) {
+                System.out.println("Nenhuma venda registrada.");
+                return;
+            }
+
+            // Agrupar registros por número de venda
+            Map<Integer, List<Map<String, String>>> vendasAgrupadas = registros.stream()
+                .collect(Collectors.groupingBy(registro -> Integer.parseInt(registro.get("num_venda"))));
+
+            // Iterar sobre cada grupo de vendas
+            for (Map.Entry<Integer, List<Map<String, String>>> entradaVenda : vendasAgrupadas.entrySet()) {
+                int numVenda = entradaVenda.getKey();
+                List<Map<String, String>> detalhesVenda = entradaVenda.getValue();
+
+                // Buscar o proprietário pelo CPF do primeiro registro da venda
+                String cpfProprietario = detalhesVenda.get(0).get("proprietario_cpf");
+                Proprietario proprietario = proprietarioSQL.pesquisarProprietarios(cpfProprietario);
+                if (proprietario == null) {
+                    System.out.println("Erro: Proprietário com CPF " + cpfProprietario + " não encontrado para a venda número " + numVenda + ".");
+                    continue;
+                }
+
+                // Exibir informações da venda
+                System.out.println("Venda Número: " + numVenda + " - Proprietário: " + proprietario.getNome());
+                System.out.println("Veículos Vendidos:");
+
+                // Buscar e exibir informações dos veículos associados à venda
+                for (Map<String, String> detalhe : detalhesVenda) {
+                    String placa = detalhe.get("veiculo_placa");
+                    String tipo = detalhe.get("veiculo_tipo");
+
+                    Veiculo veiculo;
+                    if (tipo.equalsIgnoreCase("CARRO")) {
+                        veiculo = carroSql.buscarPorPlaca(new Carro(placa));
+                    } else if (tipo.equalsIgnoreCase("MOTO")) {
+                        veiculo = motoSql.buscarPorPlaca(new Moto(placa));
+                    } else if (tipo.equalsIgnoreCase("CAMINHAO")) {
+                        veiculo = caminhaoSql.buscarPorPlaca(new Caminhao(placa));
+                    } else {
+                        System.out.println(" - Tipo de veículo desconhecido: " + tipo);
+                        continue;
+                    }
+
+                    if (veiculo != null) {
+                        System.out.println(" - " + veiculo.getPlaca() + " (" + veiculo.getClass().getSimpleName() + ")");
+                    } else {
+                        System.out.println(" - Veículo com placa " + placa + " não encontrado na tabela de " + tipo.toLowerCase() + "s.");
+                    }
                 }
             }
+        } catch (Exception e) {
+            System.out.println("Erro ao listar vendas: " + e.getMessage());
         }
-    }    
+    }
+
 }
 
 

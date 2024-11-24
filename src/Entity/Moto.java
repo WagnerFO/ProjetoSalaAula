@@ -11,6 +11,10 @@ public class Moto extends Veiculo {
     public Moto() {
 
     }
+    
+    public Moto(String placa) {
+    	super(placa);
+    }
 
     public Moto(String marca, String modelo, String cor, int ano, String placa, double valorVenda, int cilindradas, MotoTipo tipo) {
         super(marca, modelo, cor, ano, placa, valorVenda);
@@ -27,6 +31,10 @@ public class Moto extends Veiculo {
 
     public int getId() {
         return id;
+    }
+    
+    public void setId(int id) {
+    	this.id=id;
     }
 
     public int getCilindradas() {

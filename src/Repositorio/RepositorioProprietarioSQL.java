@@ -2,14 +2,24 @@ package Repositorio;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import Entity.*;
+import IRepositorio.IRepositorioCaminhaoSQL;
+import IRepositorio.IRepositorioCarroSQL;
+import IRepositorio.IRepositorioMotoSQL;
 import IRepositorio.IRepositorioProprietarioSQL;
 import Util.ConnectionFactory;
 import Util.ConnectionSingleton;
 
 
 public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
+	
+    private static IRepositorioCarroSQL carroSql = new RepositorioCarroSQL();
+    private static IRepositorioMotoSQL motoSql = new RepositorioMotoSQL();
+    private static IRepositorioCaminhaoSQL caminhaoSql = new RepositorioCaminhaoSQL();
 	
 	private Connection connection;
 
@@ -175,6 +185,7 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 	        ResultSet rs = stmt.executeQuery();
 	        if (rs.next()) {
 	            carro = new Carro();
+	            carro.setId(rs.getInt("id"));
 	            carro.setPlaca(rs.getString("placa"));
 	            carro.setMarca(rs.getString("marca"));
 	            carro.setModelo(rs.getString("modelo"));
@@ -194,6 +205,7 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 	        ResultSet rs = stmt.executeQuery();
 	        if (rs.next()) {
 	            moto = new Moto();
+	            moto.setId(rs.getInt("id"));
 	            moto.setPlaca(rs.getString("placa"));
 	            moto.setMarca(rs.getString("marca"));
 	            moto.setModelo(rs.getString("modelo"));
@@ -214,6 +226,7 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 	        ResultSet rs = stmt.executeQuery();
 	        if (rs.next()) {
 	            caminhao = new Caminhao();
+	            caminhao.setId(rs.getInt("id"));
 	            caminhao.setPlaca(rs.getString("placa"));
 	            caminhao.setMarca(rs.getString("marca"));
 	            caminhao.setModelo(rs.getString("modelo"));
@@ -279,6 +292,31 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 			e.printStackTrace();
 		}
 	}
+	
+	public void removerVeiculosDaVenda(int numVenda) throws SQLException {
+	    String sql = "DELETE FROM venda_veiculo WHERE num_venda = ?";
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setInt(1, numVenda);
+	        int rowsAffected = stmt.executeUpdate();
+	        if (rowsAffected == 0) {
+	            throw new SQLException("Nenhuma venda encontrada com número " + numVenda);
+	        }
+	    }
+	}
+
+
+	
+	@Override
+	public void removerVenda(int numVenda) throws SQLException {
+	    String sql = "DELETE FROM venda_veiculo WHERE num_venda = ?";
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setInt(1, numVenda);
+	        int rowsAffected = stmt.executeUpdate();
+	        if (rowsAffected == 0) {
+	            throw new SQLException("Nenhuma venda encontrada com número " + numVenda);
+	        }
+	    }
+	}
 
 	
 	@Override
@@ -301,7 +339,187 @@ public class RepositorioProprietarioSQL implements IRepositorioProprietarioSQL{
 			e.printStackTrace();
 			
 		}
-		
+	}
+
+	@Override
+	public Venda buscarVendaPorNumVenda(int numVenda) throws SQLException {
+	    String sql = "SELECT * FROM venda_veiculo WHERE num_venda = ?";
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setInt(1, numVenda);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                // Aqui você vai pegar os dados da venda
+	                Venda venda = new Venda();
+	                venda.setId(rs.getInt("id")); // Pegando o id da venda
+	                venda.setNumVenda(rs.getInt("num_venda")); // A venda tem um campo num_venda
+
+	                // Associando o proprietário
+	                String cpfProprietario = rs.getString("proprietario_cpf");
+	                Proprietario proprietario = buscarProprietarioPorCpf(cpfProprietario);
+	                venda.setProprietario(proprietario);
+
+	                // Aqui podemos buscar os veículos vendidos associados a essa venda
+	                List<Veiculo> veiculos = buscarVeiculosPorVenda(numVenda);
+	                venda.setVeiculoVendidos(veiculos);
+
+	                return venda;
+	            } else {
+	                return null; // Caso não encontre a venda
+	            }
+	        }
+	    }
+	}
+
+	public Proprietario buscarProprietarioPorCpf(String cpf) throws SQLException {
+	    // Supondo que você tenha um método para buscar o proprietário pelo CPF
+	    Proprietario proprietario = new Proprietario();
+	    // Preencha as informações do proprietário
+	    return proprietario;
+	}
+
+	
+	// Método para buscar os veículos associados a uma venda
+	@Override
+	public List<Veiculo> buscarVeiculosPorVenda(int idVenda) throws SQLException {
+	    List<Veiculo> veiculos = new ArrayList<>();
+	    String sql = "SELECT veiculo_placa, veiculo_tipo FROM venda_veiculo WHERE id = ?";
+	    
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setInt(1, idVenda);
+	        
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                String placa = rs.getString("veiculo_placa");
+	                String tipo = rs.getString("veiculo_tipo");
+
+	                // Criar o veículo de acordo com o tipo
+	                Veiculo veiculo = null;
+	                switch (tipo) {
+	                    case "CARRO":
+	                        veiculo = buscarCarroPorPlaca(placa);
+	                        break;
+	                    case "MOTO":
+	                        veiculo = buscarMotoPorPlaca(placa);
+	                        break;
+	                    case "CAMINHAO":
+	                        veiculo = buscarCaminhaoPorPlaca(placa);
+	                        break;
+	                    default:
+	                        throw new SQLException("Tipo de veículo desconhecido: " + tipo);
+	                }
+
+	                if (veiculo != null) {
+	                    veiculos.add(veiculo);
+	                }
+	            }
+	        }
+	    }
+	    
+	    return veiculos;
+	}
+
+	// Métodos para buscar veículos específicos pelo placa
+	private Carro buscarCarroPorPlaca(String placa) throws SQLException {
+	    Carro carro = new Carro();
+	    carro.setPlaca(placa);
+	    Carro carroEncontrado = carroSql.buscarPorPlaca(carro);
+	    if (carroEncontrado == null) {
+	        throw new SQLException("Carro com a placa " + placa + " não encontrado.");
+	    }
+	    return carroEncontrado;
+	}
+
+	private Moto buscarMotoPorPlaca(String placa) throws SQLException {
+	    Moto moto = new Moto();
+	    moto.setPlaca(placa);
+	    Moto motoEncontrada = motoSql.buscarPorPlaca(moto);
+	    if (motoEncontrada == null) {
+	        throw new SQLException("Moto com a placa " + placa + " não encontrada.");
+	    }
+	    return motoEncontrada;
+	}
+
+	private Caminhao buscarCaminhaoPorPlaca(String placa) throws SQLException {
+	    Caminhao caminhao = new Caminhao();
+	    caminhao.setPlaca(placa);
+	    Caminhao caminhaoEncontrado = caminhaoSql.buscarPorPlaca(caminhao);
+	    if (caminhaoEncontrado == null) {
+	        throw new SQLException("Caminhão com a placa " + placa + " não encontrado.");
+	    }
+	    return caminhaoEncontrado;
 	}
 	
+	@Override
+	public List<Map<String, String>> buscarRegistrosPorNumVenda(int numVenda) throws SQLException {
+	    List<Map<String, String>> registros = new ArrayList<>();
+	    String sql = "SELECT num_venda, proprietario_cpf, veiculo_placa, veiculo_tipo FROM venda_veiculo WHERE num_venda = ?";
+
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setInt(1, numVenda);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                Map<String, String> registro = new HashMap<>();
+	                registro.put("num_venda", rs.getString("num_venda"));
+	                registro.put("proprietario_cpf", rs.getString("proprietario_cpf"));
+	                registro.put("veiculo_placa", rs.getString("veiculo_placa"));
+	                registro.put("veiculo_tipo", rs.getString("veiculo_tipo"));
+	                registros.add(registro);
+	            }
+	        }
+	    }
+	    return registros;
+	}
+	
+	@Override
+	public List<Map<String, String>> listarRegistrosVenda() throws SQLException {
+	    List<Map<String, String>> registros = new ArrayList<>();
+	    String sql = "SELECT num_venda, proprietario_cpf, veiculo_placa, veiculo_tipo FROM venda_veiculo";
+
+	    try (PreparedStatement stmt = connection.prepareStatement(sql);
+	         ResultSet rs = stmt.executeQuery()) {
+	        while (rs.next()) {
+	            Map<String, String> registro = new HashMap<>();
+	            registro.put("num_venda", rs.getString("num_venda"));
+	            registro.put("proprietario_cpf", rs.getString("proprietario_cpf"));
+	            registro.put("veiculo_placa", rs.getString("veiculo_placa"));
+	            registro.put("veiculo_tipo", rs.getString("veiculo_tipo"));
+	            registros.add(registro);
+	        }
+	    }
+	    return registros;
+	}
+
+
+	@Override
+	public void atualizarProprietarioVenda(int numVenda, String novoCpf) throws SQLException {
+	    String sql = "UPDATE venda_veiculo SET proprietario_cpf = ? WHERE num_venda = ?";
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setString(1, novoCpf);
+	        stmt.setInt(2, numVenda);
+	        int rowsAffected = stmt.executeUpdate();
+	        if (rowsAffected == 0) {
+	            throw new SQLException("Nenhuma venda encontrada para atualizar com o número " + numVenda);
+	        }
+	    }
+	}
+
+	@Override
+	public void atualizarVeiculoNaVenda(int numVenda, String placaAtual, String novaPlaca, String novoTipo) throws SQLException {
+	    String sql = "UPDATE venda_veiculo SET veiculo_placa = ?, veiculo_tipo = ? WHERE num_venda = ? AND veiculo_placa = ?";
+
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setString(1, novaPlaca);
+	        stmt.setString(2, novoTipo);
+	        stmt.setInt(3, numVenda);
+	        stmt.setString(4, placaAtual);
+
+	        int rowsUpdated = stmt.executeUpdate();
+	        if (rowsUpdated == 0) {
+	            throw new SQLException("Nenhuma venda de veículo encontrada para atualizar com a placa " + placaAtual);
+	        }
+	    }
+	}
+
+
+
 }

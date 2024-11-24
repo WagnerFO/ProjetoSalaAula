@@ -11,6 +11,10 @@ public class Carro extends Veiculo {
 
     public Carro() {
     }
+    
+    public Carro(String placa) {
+    	super(placa);
+    }
 
     public Carro(String marca, String modelo, String cor, int ano,String placa, double valorVenda, int quantPortas, CarroTipo tipo) {
         super(marca, modelo, cor, ano,placa, valorVenda);
